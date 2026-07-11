@@ -73,7 +73,7 @@ export function PainScale({ value, onChange, label = 'Dolor' }: { value: number;
 export function ProgressRing({ percent }: { percent: number }) {
   const clamped = Math.max(0, Math.min(100, percent));
   return (
-    <div className="premium-ring grid size-32 place-items-center rounded-full shadow-soft" style={{ background: `conic-gradient(#2f8f69 ${clamped}%, var(--ring-track) 0)` }} aria-label={`${clamped}% completado`}>
+    <div className="premium-ring grid size-32 shrink-0 place-items-center rounded-full shadow-soft" style={{ background: `conic-gradient(#2f8f69 ${clamped}%, var(--ring-track) 0)` }} aria-label={`${clamped}% completado`}>
       <div className="grid size-24 place-items-center rounded-full border border-app-border bg-app-surface/95 text-2xl font-bold tracking-[-0.03em] text-app-primaryDark shadow-inner">{clamped}%</div>
     </div>
   );

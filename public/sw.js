@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mi-recuperacion-lumbar-v9-1-0-5';
+const CACHE_NAME = 'mi-recuperacion-lumbar-v10-1-0-6';
 const CORE_ASSETS = [
   '/',
   '/index.html',

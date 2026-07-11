@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.6 - 2026-07-11
+
+### Fixed
+- Stabilized the home dashboard layout across intermediate widths so KPI cards no longer overlap, compress values or compete with the progress ring.
+- Improved KPI card typography, minimum heights and responsive grid behavior for desktop, tablet and mobile.
+
+### Changed
+- App version bumped to `1.0.6`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
 ## 1.0.5 - 2026-07-11
 
 ### Changed
