@@ -1,4 +1,6 @@
 import { Award, Download, Printer } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Button, Card } from '../components/ui';
 import type { AppState, ExerciseSessionLog, Session } from '../types';
 
@@ -23,6 +25,20 @@ export function ProgressPage({ state }: { state: AppState }) {
     day.setDate(day.getDate() - (6 - index));
     const iso = day.toISOString().slice(0, 10);
     return { iso, session: state.sessions.find((item) => item.date === iso) };
+  });
+  const weeklyData = last7.map(({ iso, session }) => ({
+    day: new Intl.DateTimeFormat('es-ES', { weekday: 'short' }).format(new Date(iso)),
+    sesiones: session?.completedExerciseIds.length ? 1 : 0,
+    minutos: session?.durationMinutes || 0,
+    dolor: session?.painAfter || 0,
+    fatiga: session?.fatigue || 0,
+  }));
+  const monthlyData = Array.from({ length: 30 }, (_, index) => {
+    const day = new Date();
+    day.setDate(day.getDate() - (29 - index));
+    const iso = day.toISOString().slice(0, 10);
+    const session = state.sessions.find((item) => item.date === iso);
+    return { day: day.getDate().toString(), minutos: session?.durationMinutes || 0, dolor: session?.painAfter || 0 };
   });
 
   return (
@@ -95,10 +111,35 @@ export function ProgressPage({ state }: { state: AppState }) {
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Chart title="Sesiones completadas" values={last7.map((item) => item.session?.completedExerciseIds.length ? 1 : 0)} />
-        <Chart title="Minutos de actividad" values={last7.map((item) => item.session?.durationMinutes || 0)} />
-        <Chart title="Dolor después" values={last7.map((item) => item.session?.painAfter || 0)} />
-        <Chart title="Fatiga" values={last7.map((item) => item.session?.fatigue || 0)} />
+        <RechartsPanel title="Gráfico semanal" description="Minutos y tolerancia de los últimos 7 días">
+          <ResponsiveContainer width="100%" height={240}>
+            <AreaChart data={weeklyData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+              <defs>
+                <linearGradient id="minutesGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#2bbdc1" stopOpacity={0.34} />
+                  <stop offset="95%" stopColor="#2bbdc1" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#d8e9ea" />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} />
+              <YAxis tickLine={false} axisLine={false} />
+              <Tooltip />
+              <Area type="monotone" dataKey="minutos" stroke="#0f5c63" strokeWidth={3} fill="url(#minutesGradient)" />
+              <Area type="monotone" dataKey="dolor" stroke="#2f8f69" strokeWidth={2} fill="transparent" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </RechartsPanel>
+        <RechartsPanel title="Gráfico mensual" description="Tiempo acumulado por día">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={monthlyData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#d8e9ea" />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} />
+              <YAxis tickLine={false} axisLine={false} />
+              <Tooltip />
+              <Bar dataKey="minutos" fill="#2bbdc1" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </RechartsPanel>
       </div>
 
       <Card>
@@ -168,9 +209,8 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return <Card><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-2 text-2xl font-bold text-petrol-700">{value}</p></Card>;
 }
 
-function Chart({ title, values }: { title: string; values: number[] }) {
-  const max = Math.max(1, ...values);
-  return <Card><h3 className="mb-4 font-bold text-petrol-700">{title}</h3><div className="flex h-40 items-end gap-2">{values.map((value, index) => <div key={index} className="flex flex-1 flex-col items-center gap-2"><div className="w-full rounded-t-lg bg-aqua" style={{ height: `${Math.max(8, (value / max) * 140)}px` }} /><span className="text-xs text-slate-500">{index + 1}</span></div>)}</div></Card>;
+function RechartsPanel({ title, description, children }: { title: string; description: string; children: ReactNode }) {
+  return <Card><h3 className="font-bold text-petrol-700">{title}</h3><p className="mb-4 text-sm text-slate-600">{description}</p>{children}</Card>;
 }
 
 function average(values: number[]) {

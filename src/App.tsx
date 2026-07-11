@@ -31,7 +31,7 @@ export default function App() {
 
   return (
     <div className={`app-surface min-h-screen ${pageClass}`}>
-      <div className="mx-auto flex max-w-7xl gap-5 px-4 py-5 pb-36 lg:px-6 lg:pb-8">
+      <div className="safe-area-shell mx-auto flex max-w-7xl gap-6 px-4 py-6 pb-36 lg:px-6 lg:pb-10">
         <main className="min-w-0 flex-1">
           <Header />
           {page === 'home' && <Home state={state} setState={setState} setPage={setPage} />}

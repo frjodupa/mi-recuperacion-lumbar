@@ -1,4 +1,4 @@
-import { CalendarDays, MessageCircle, Play, Search } from 'lucide-react';
+import { CalendarDays, Flame, MessageCircle, Play, Search, Target, TimerReset } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { AppState, DailyCheckIn } from '../types';
 import { Button, Card, PainScale, ProgressRing, SafetyNotice } from '../components/ui';
@@ -14,6 +14,8 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   const checkIn = state.checkIns.find((item) => item.date === today) || createDefaultCheckIn(today, recommendedRoutine.id);
   const percent = Math.round(((session?.completedExerciseIds.length || 0) / Math.max(1, recommendedRoutine.exercises.length)) * 100);
   const totalMinutes = state.sessions.reduce((sum, item) => sum + item.durationMinutes, 0);
+  const streak = calculateCurrentStreak(state.sessions);
+  const dailyGoal = Math.max(1, Math.round((recommendedRoutine.exercises.length || 1) * 3));
   const surgeryDays = getDaysSince(state.preferences.surgeryDate);
   const quote = quotes[new Date().getDay() % quotes.length];
 
@@ -29,18 +31,24 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
       </div>
       <SafetyNotice />
 
-      <Card>
-        <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+      <Card className="overflow-hidden p-6 sm:p-7">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="space-y-3">
             <p className="flex items-center gap-2 font-semibold text-petrol-700"><CalendarDays className="size-5" /> Asistente diario</p>
-            <div className="grid gap-3 sm:grid-cols-3">
-              <Metric label="Días desde operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} />
-              <Metric label="Tiempo rehabilitación" value={`${totalMinutes} min`} />
-              <Metric label="Sesión recomendada" value={recommendedRoutine.name} />
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} />
+              <Metric icon={TimerReset} label="Tiempo total rehabilitado" value={`${totalMinutes} min`} />
+              <Metric icon={Flame} label="Racha de días" value={`${streak} d`} />
+              <Metric icon={Target} label="Objetivo diario" value={`${dailyGoal} min`} />
             </div>
-            <Button className="w-full sm:w-auto" onClick={() => setPage('routine')}><Play className="size-5" /> Comenzar sesión recomendada</Button>
+            <div className="rounded-2xl border border-petrol-100 bg-white/70 p-4">
+              <p className="text-xs font-bold uppercase text-slate-500">Sesión recomendada</p>
+              <p className="mt-1 text-lg font-bold text-petrol-700">{recommendedRoutine.name}</p>
+              <p className="text-sm text-slate-600">{recommendedRoutine.exercises.length} ejercicios programados</p>
+            </div>
+            <Button className="w-full py-3 sm:w-auto" onClick={() => setPage('routine')}><Play className="size-5" /> Comenzar sesión recomendada</Button>
           </div>
-          <ProgressRing percent={percent} />
+          <div className="mx-auto lg:mx-0"><ProgressRing percent={percent} /></div>
         </div>
       </Card>
 
@@ -68,14 +76,14 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   );
 }
 
-function Metric({ label, value }: { label: string; value: string | number }) {
-  return <div className="rounded-xl border border-petrol-100 bg-petrol-50 p-3"><p className="text-xs font-bold uppercase text-slate-500">{label}</p><p className="mt-1 font-bold text-petrol-700">{value}</p></div>;
+function Metric({ icon: Icon, label, value }: { icon: typeof CalendarDays; label: string; value: string | number }) {
+  return <div className="rounded-2xl border border-petrol-100 bg-white/70 p-4 shadow-sm"><div className="grid size-10 place-items-center rounded-2xl bg-petrol-50 text-petrol-700"><Icon className="size-5" /></div><p className="mt-3 text-xs font-bold uppercase text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold text-petrol-700">{value}</p></div>;
 }
 
 function Scale({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
   return (
     <label className="block font-semibold text-petrol-700">{label} <span className="rounded-full bg-petrol-50 px-2 py-1 text-sm">{value}/10</span>
-      <input className="mt-2 h-3 w-full accent-petrol-500" type="range" min="0" max="10" value={value} onChange={(event) => onChange(Number(event.target.value))} />
+      <input className="mt-2 w-full" type="range" min="0" max="10" value={value} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
   );
 }
@@ -110,6 +118,18 @@ function getDaysSince(date?: string) {
   const start = new Date(date);
   if (Number.isNaN(start.getTime())) return null;
   return Math.max(0, Math.floor((Date.now() - start.getTime()) / 86400000));
+}
+
+function calculateCurrentStreak(sessions: AppState['sessions']) {
+  const dates = new Set(sessions.filter((session) => session.completedExerciseIds.length).map((session) => session.date));
+  let streak = 0;
+  for (let i = 0; i < 60; i++) {
+    const day = new Date();
+    day.setDate(day.getDate() - i);
+    if (dates.has(day.toISOString().slice(0, 10))) streak += 1;
+    else if (i > 0) break;
+  }
+  return streak;
 }
 
 function getLocalAssistantAnswer(query: string, state: AppState) {

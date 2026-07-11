@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.4 - 2026-07-11
+
+### Added
+- Added Recharts-based weekly and monthly dashboard charts.
+- Added more visual home dashboard cards for surgery days, total rehabilitation time, streak and daily goal.
+
+### Changed
+- Refined the interface with a subtle glassmorphism style, softer cards, animated progress ring, improved sliders, mobile safe-area spacing and premium bottom navigation.
+- App version bumped to `1.0.4`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
 ## 1.0.3 - 2026-07-11
 
 ### Fixed

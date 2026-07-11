@@ -3,17 +3,17 @@ import { AlertTriangle, Check, X } from 'lucide-react';
 import { safetyNotice } from '../data/initialData';
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`print-card animate-soft rounded-[18px] border border-app-border bg-app-surface p-5 shadow-card hover:border-petrol-100 hover:shadow-soft ${className}`}>{children}</section>;
+  return <section className={`print-card animate-soft glass-card premium-card-enter rounded-[22px] border p-5 hover:-translate-y-0.5 hover:shadow-soft ${className}`}>{children}</section>;
 }
 
 export function Button({ children, variant = 'primary', className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {
   const variants = {
-    primary: 'bg-app-primary text-white shadow-sm hover:bg-app-primaryDark active:scale-[0.99]',
-    secondary: 'bg-app-secondary/15 text-app-primaryDark hover:bg-app-secondary/25 active:scale-[0.99]',
-    ghost: 'bg-app-surface text-app-primaryDark border border-app-border hover:bg-app-primaryLight active:scale-[0.99]',
-    danger: 'bg-white text-app-danger border border-red-100 hover:bg-red-50 active:scale-[0.99]',
+    primary: 'bg-app-primary text-white shadow-sm hover:bg-app-primaryDark active:scale-[0.98]',
+    secondary: 'bg-app-secondary/15 text-app-primaryDark hover:bg-app-secondary/25 active:scale-[0.98]',
+    ghost: 'bg-app-surface/75 text-app-primaryDark border border-app-border hover:bg-app-primaryLight active:scale-[0.98]',
+    danger: 'bg-white/85 text-app-danger border border-red-100 hover:bg-red-50 active:scale-[0.98]',
   };
-  return <button className={`animate-soft inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition ${variants[variant]} disabled:cursor-not-allowed disabled:opacity-50 ${className}`} {...props}>{children}</button>;
+  return <button className={`animate-soft inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 font-semibold transition ${variants[variant]} disabled:cursor-not-allowed disabled:opacity-50 ${className}`} {...props}>{children}</button>;
 }
 
 export function SafetyNotice() {
@@ -64,7 +64,7 @@ export function PainScale({ value, onChange, label = 'Dolor' }: { value: number;
         <span className="font-semibold text-app-primaryDark">{label}</span>
         <span className="rounded-full bg-petrol-50 px-3 py-1 font-bold text-petrol-700">{value}/10</span>
       </div>
-      <input aria-label={`${label} de 0 a 10`} className="h-3 w-full accent-petrol-500" type="range" min="0" max="10" value={value} onChange={(event) => onChange(Number(event.target.value))} />
+      <input aria-label={`${label} de 0 a 10`} className="w-full" type="range" min="0" max="10" value={value} onChange={(event) => onChange(Number(event.target.value))} />
       <div className="mt-1 flex justify-between text-xs text-slate-500"><span>0</span><span>10</span></div>
     </div>
   );
@@ -73,8 +73,8 @@ export function PainScale({ value, onChange, label = 'Dolor' }: { value: number;
 export function ProgressRing({ percent }: { percent: number }) {
   const clamped = Math.max(0, Math.min(100, percent));
   return (
-    <div className="grid size-24 place-items-center rounded-full" style={{ background: `conic-gradient(#2f8f69 ${clamped}%, #d9ecec 0)` }} aria-label={`${clamped}% completado`}>
-      <div className="grid size-16 place-items-center rounded-full bg-app-surface text-lg font-bold text-app-primaryDark">{clamped}%</div>
+    <div className="premium-ring grid size-28 place-items-center rounded-full shadow-soft" style={{ background: `conic-gradient(#2f8f69 ${clamped}%, var(--ring-track) 0)` }} aria-label={`${clamped}% completado`}>
+      <div className="grid size-20 place-items-center rounded-full border border-app-border bg-app-surface text-xl font-bold text-app-primaryDark">{clamped}%</div>
     </div>
   );
 }
