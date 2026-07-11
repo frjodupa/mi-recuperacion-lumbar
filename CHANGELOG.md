@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.5 - 2026-07-11
+
+### Changed
+- Completed a dedicated UX/UI design sprint focused only on visual language and reusable components.
+- Refined global design tokens, premium cards, buttons, forms, sliders, header, navigation, dashboard hero and progress dashboard visuals.
+- App version bumped to `1.0.5`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
 ## 1.0.4 - 2026-07-11
 
 ### Added

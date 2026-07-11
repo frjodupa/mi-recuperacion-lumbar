@@ -43,15 +43,18 @@ export function ProgressPage({ state }: { state: AppState }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="premium-hero rounded-[32px] border border-white/70 p-6 sm:p-8">
+        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-petrol-700">Progreso e historial</h2>
-          <p className="text-slate-600">Seguimiento clínico de sesiones, síntomas, fuerza, tolerancia y adherencia.</p>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-aqua">Dashboard clínico</p>
+          <h2 className="mt-2 text-4xl font-bold leading-tight tracking-[-0.04em] text-petrol-700">Progreso e historial</h2>
+          <p className="mt-2 max-w-2xl text-slate-600">Seguimiento clínico de sesiones, síntomas, fuerza, tolerancia y adherencia.</p>
         </div>
         <div className="no-print flex gap-2"><Button variant="secondary" onClick={() => window.print()}><Printer className="size-5" /> Exportar resumen</Button><Button variant="ghost" onClick={() => window.print()}><Download className="size-5" /> Imprimir PDF</Button></div>
+        </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
         <Stat label="Sesiones completadas" value={completed.length} />
         <Stat label="Ejercicios registrados" value={exercises} />
         <Stat label="Minutos acumulados" value={minutes} />
@@ -86,7 +89,7 @@ export function ProgressPage({ state }: { state: AppState }) {
         <h3 className="mb-3 text-xl font-bold text-petrol-700">Vista semanal</h3>
         <div className="grid gap-2 md:grid-cols-7">
           {last7.map(({ iso, session }) => (
-            <div key={iso} className="rounded-xl border border-petrol-100 p-3">
+            <div key={iso} className="rounded-[22px] border border-petrol-100 bg-white/58 p-3">
               <p className="font-bold text-petrol-700">{new Intl.DateTimeFormat('es-ES', { weekday: 'short' }).format(new Date(iso))}</p>
               <p className="text-sm text-slate-600">{session?.completedExerciseIds.length ? 'Sesión completada' : 'Descanso'}</p>
               <p className="text-xs text-slate-500">{session?.durationMinutes || 0} min · dolor {session?.painBefore ?? '-'}→{session?.painAfter ?? '-'}</p>
@@ -105,7 +108,7 @@ export function ProgressPage({ state }: { state: AppState }) {
             day.setDate(day.getDate() - (34 - index));
             const iso = day.toISOString().slice(0, 10);
             const session = state.sessions.find((item) => item.date === iso);
-            return <div key={iso} className={`grid aspect-square place-items-center rounded-lg text-xs font-bold ${session?.completedExerciseIds.length ? 'bg-green-100 text-calmgreen' : 'bg-petrol-50 text-slate-500'}`}>{day.getDate()}</div>;
+            return <div key={iso} className={`grid aspect-square place-items-center rounded-2xl text-xs font-bold transition ${session?.completedExerciseIds.length ? 'bg-green-100 text-calmgreen shadow-sm' : 'bg-white/60 text-slate-500'}`}>{day.getDate()}</div>;
           })}
         </div>
       </Card>
@@ -206,11 +209,11 @@ function SessionHistory({ session, state }: { session: Session; state: AppState 
 }
 
 function Stat({ label, value }: { label: string; value: string | number }) {
-  return <Card><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-2 text-2xl font-bold text-petrol-700">{value}</p></Card>;
+  return <Card className="p-5"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p><p className="mt-2 text-3xl font-bold tracking-[-0.04em] text-petrol-700">{value}</p></Card>;
 }
 
 function RechartsPanel({ title, description, children }: { title: string; description: string; children: ReactNode }) {
-  return <Card><h3 className="font-bold text-petrol-700">{title}</h3><p className="mb-4 text-sm text-slate-600">{description}</p>{children}</Card>;
+  return <Card className="p-6"><h3 className="text-xl font-bold tracking-[-0.02em] text-petrol-700">{title}</h3><p className="mb-5 text-sm text-slate-600">{description}</p>{children}</Card>;
 }
 
 function average(values: number[]) {

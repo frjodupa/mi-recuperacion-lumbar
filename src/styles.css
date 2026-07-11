@@ -6,18 +6,20 @@
   --color-primary: #0f5c63;
   --color-primary-dark: #083b41;
   --color-primary-light: #e9f7f7;
-  --color-secondary: #2bbdc1;
-  --color-background: #f6fbfb;
+  --color-secondary: #62cfd0;
+  --color-background: #f7f8f5;
   --color-surface: #ffffff;
   --color-success: #2f8f69;
-  --color-warning: #b7791f;
-  --color-danger: #b42318;
+  --color-warning: #a57532;
+  --color-danger: #a94f46;
   --color-text-primary: #12343a;
-  --color-text-secondary: #5f7175;
-  --color-border: #d8e9ea;
-  --glass-surface: rgba(255, 255, 255, 0.74);
-  --glass-border: rgba(255, 255, 255, 0.72);
+  --color-text-secondary: #667174;
+  --color-border: #dfe7e4;
+  --glass-surface: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.82);
   --ring-track: #d9ecec;
+  --shadow-soft-ui: 0 1px 2px rgba(13, 45, 49, 0.04), 0 18px 60px rgba(15, 92, 99, 0.08);
+  --shadow-hover-ui: 0 1px 2px rgba(13, 45, 49, 0.04), 0 24px 80px rgba(15, 92, 99, 0.12);
   color: var(--color-text-primary);
   background: var(--color-background);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -61,6 +63,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   --glass-surface: rgba(16, 35, 39, 0.78);
   --glass-border: rgba(93, 214, 216, 0.18);
   --ring-track: #1d3b40;
+  --shadow-soft-ui: 0 1px 2px rgba(0, 0, 0, 0.2), 0 18px 60px rgba(0, 0, 0, 0.24);
+  --shadow-hover-ui: 0 1px 2px rgba(0, 0, 0, 0.22), 0 24px 80px rgba(0, 0, 0, 0.32);
   color-scheme: dark;
 }
 
@@ -105,9 +109,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .app-surface {
   background:
-    radial-gradient(circle at top left, rgba(43, 189, 193, 0.15), transparent 38rem),
-    radial-gradient(circle at 90% 8%, rgba(15, 92, 99, 0.08), transparent 28rem),
-    linear-gradient(180deg, #fbfefe 0%, var(--color-background) 100%);
+    radial-gradient(circle at 8% 0%, rgba(98, 207, 208, 0.22), transparent 34rem),
+    radial-gradient(circle at 92% 4%, rgba(15, 92, 99, 0.10), transparent 30rem),
+    radial-gradient(circle at 50% 100%, rgba(223, 231, 228, 0.55), transparent 36rem),
+    linear-gradient(180deg, #fcfdfb 0%, var(--color-background) 100%);
 }
 
 .theme-dark.app-surface {
@@ -123,9 +128,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .glass-card {
   background: var(--glass-surface);
-  border-color: rgba(216, 233, 234, 0.78);
-  box-shadow: 0 20px 60px rgba(15, 92, 99, 0.08);
-  backdrop-filter: blur(20px);
+  border-color: rgba(223, 231, 228, 0.82);
+  box-shadow: var(--shadow-soft-ui);
+  backdrop-filter: blur(22px) saturate(1.12);
 }
 
 .premium-card-enter {
@@ -145,6 +150,34 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   top: 0.75rem;
   z-index: 30;
   backdrop-filter: blur(18px);
+}
+
+.premium-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(233, 247, 247, 0.72)),
+    radial-gradient(circle at 82% 16%, rgba(98, 207, 208, 0.34), transparent 18rem);
+}
+
+.premium-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -8rem -12rem auto;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(15, 92, 99, 0.11), transparent 64%);
+  pointer-events: none;
+}
+
+.premium-kpi {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.58));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.74), 0 12px 36px rgba(15, 92, 99, 0.06);
+}
+
+.premium-timeline-dot {
+  box-shadow: 0 0 0 6px rgba(98, 207, 208, 0.16);
 }
 
 @keyframes exercise-in {
@@ -168,6 +201,23 @@ input[type="range"] {
   border-radius: 999px;
   background: linear-gradient(90deg, var(--color-secondary), var(--color-success));
   box-shadow: inset 0 0 0 1px rgba(15, 92, 99, 0.08);
+}
+
+input:not([type="range"]),
+select,
+textarea {
+  border-radius: 1rem;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.64);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+input:not([type="range"]):focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(43, 189, 193, 0.62);
+  box-shadow: 0 0 0 4px rgba(43, 189, 193, 0.16);
 }
 
 input[type="range"]::-webkit-slider-thumb {

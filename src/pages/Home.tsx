@@ -1,4 +1,4 @@
-import { CalendarDays, Flame, MessageCircle, Play, Search, Target, TimerReset } from 'lucide-react';
+import { CalendarDays, CheckCircle2, Flame, MessageCircle, Play, Search, Target, TimerReset } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { AppState, DailyCheckIn } from '../types';
 import { Button, Card, PainScale, ProgressRing, SafetyNotice } from '../components/ui';
@@ -25,37 +25,45 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
 
   return (
     <div className="space-y-5">
-      <div>
-        <h2 className="text-3xl font-bold text-petrol-700">Buenos días, {state.preferences.patientName || 'José'}.</h2>
-        <p className="text-lg text-slate-600">{new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}</p>
-      </div>
       <SafetyNotice />
 
-      <Card className="overflow-hidden p-6 sm:p-7">
-        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div className="space-y-3">
-            <p className="flex items-center gap-2 font-semibold text-petrol-700"><CalendarDays className="size-5" /> Asistente diario</p>
+      <Card className="premium-hero p-6 sm:p-8 lg:p-10">
+        <div className="relative z-10 grid gap-8 xl:grid-cols-[1fr_330px] xl:items-center">
+          <div className="space-y-6">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-petrol-100 bg-white/70 px-3 py-1 text-sm font-bold text-petrol-700 shadow-sm"><CalendarDays className="size-4" /> Asistente diario</p>
+              <h2 className="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">Buenos días, {state.preferences.patientName || 'José'}.</h2>
+              <p className="mt-3 text-lg text-slate-600">{new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}</p>
+            </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} />
-              <Metric icon={TimerReset} label="Tiempo total rehabilitado" value={`${totalMinutes} min`} />
-              <Metric icon={Flame} label="Racha de días" value={`${streak} d`} />
-              <Metric icon={Target} label="Objetivo diario" value={`${dailyGoal} min`} />
+              <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
+              <Metric icon={TimerReset} label="Tiempo total rehabilitado" value={`${totalMinutes} min`} tone="petrol" />
+              <Metric icon={Flame} label="Racha de días" value={`${streak} d`} tone="green" />
+              <Metric icon={Target} label="Objetivo diario" value={`${dailyGoal} min`} tone="slate" />
             </div>
-            <div className="rounded-2xl border border-petrol-100 bg-white/70 p-4">
-              <p className="text-xs font-bold uppercase text-slate-500">Sesión recomendada</p>
-              <p className="mt-1 text-lg font-bold text-petrol-700">{recommendedRoutine.name}</p>
-              <p className="text-sm text-slate-600">{recommendedRoutine.exercises.length} ejercicios programados</p>
+            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div className="rounded-[28px] border border-white/70 bg-white/70 p-5 shadow-sm backdrop-blur">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Sesión recomendada</p>
+                <p className="mt-1 text-xl font-bold tracking-[-0.02em] text-petrol-700">{recommendedRoutine.name}</p>
+                <p className="mt-1 text-sm text-slate-600">{recommendedRoutine.exercises.length} ejercicios programados · enfoque suave y controlado</p>
+              </div>
+              <Button className="w-full px-6 py-4 text-base sm:w-auto" onClick={() => setPage('routine')}><Play className="size-5" /> Comenzar</Button>
             </div>
-            <Button className="w-full py-3 sm:w-auto" onClick={() => setPage('routine')}><Play className="size-5" /> Comenzar sesión recomendada</Button>
           </div>
-          <div className="mx-auto lg:mx-0"><ProgressRing percent={percent} /></div>
+          <div className="mx-auto grid place-items-center gap-4 rounded-[32px] border border-white/70 bg-white/58 p-6 shadow-soft backdrop-blur xl:mx-0">
+            <ProgressRing percent={percent} />
+            <div className="text-center">
+              <p className="font-bold text-petrol-700">Progreso de hoy</p>
+              <p className="text-sm text-slate-600">{session?.completedExerciseIds.length || 0} ejercicios completados</p>
+            </div>
+          </div>
         </div>
       </Card>
 
-      <Card>
+      <Card className="p-6 sm:p-7">
         <h3 className="text-xl font-bold text-petrol-700">Antes de comenzar</h3>
         <p className="mt-1 text-sm text-slate-600">Estos datos ayudan a contextualizar la sesión y el historial médico.</p>
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="mt-6 grid gap-5 lg:grid-cols-2">
           <PainScale label="Dolor" value={checkIn.pain} onChange={(pain) => updateCheckIn({ pain })} />
           <Scale label="Rigidez" value={checkIn.stiffness ?? 0} onChange={(stiffness) => updateCheckIn({ stiffness })} />
           <Scale label="Fatiga" value={checkIn.fatigue ?? 0} onChange={(fatigue) => updateCheckIn({ fatigue })} />
@@ -64,6 +72,15 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
           <label className="font-semibold text-petrol-700">Estado de ánimo<select className="mt-2 min-h-11 w-full rounded-xl border border-petrol-100 px-3" value={checkIn.mood || 'Tranquilo'} onChange={(event) => updateCheckIn({ mood: event.target.value, feeling: event.target.value })}>{moods.map((mood) => <option key={mood}>{mood}</option>)}</select></label>
         </div>
         {checkIn.pain >= 7 && <div className="mt-4 rounded-xl bg-amber-50 p-3 font-semibold text-amber-900">Hoy no deberías realizar la rutina sin consultar previamente con un profesional sanitario.</div>}
+      </Card>
+
+      <Card>
+        <h3 className="text-xl font-bold text-petrol-700">Timeline de hoy</h3>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          <TimelineItem title="Chequeo" body="Dolor, sueño y fatiga registrados antes de empezar." active />
+          <TimelineItem title="Rutina" body={`${recommendedRoutine.exercises.length} ejercicios con control y descanso.`} />
+          <TimelineItem title="Registro" body="Guarda síntomas, observaciones y progreso al terminar." />
+        </div>
       </Card>
 
       <LocalAssistant state={state} />
@@ -76,15 +93,33 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   );
 }
 
-function Metric({ icon: Icon, label, value }: { icon: typeof CalendarDays; label: string; value: string | number }) {
-  return <div className="rounded-2xl border border-petrol-100 bg-white/70 p-4 shadow-sm"><div className="grid size-10 place-items-center rounded-2xl bg-petrol-50 text-petrol-700"><Icon className="size-5" /></div><p className="mt-3 text-xs font-bold uppercase text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold text-petrol-700">{value}</p></div>;
+function Metric({ icon: Icon, label, value, tone }: { icon: typeof CalendarDays; label: string; value: string | number; tone: 'aqua' | 'petrol' | 'green' | 'slate' }) {
+  const tones = {
+    aqua: 'bg-aqua/12 text-petrol-700',
+    petrol: 'bg-petrol-50 text-petrol-700',
+    green: 'bg-green-50 text-calmgreen',
+    slate: 'bg-slate-100 text-slate-700',
+  };
+  return <div className="premium-kpi rounded-[26px] border border-white/70 p-4"><div className={`grid size-11 place-items-center rounded-[18px] ${tones[tone]}`}><Icon className="size-5" /></div><p className="mt-4 text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p><p className="mt-1 text-3xl font-bold tracking-[-0.04em] text-petrol-700">{value}</p></div>;
 }
 
 function Scale({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
   return (
-    <label className="block font-semibold text-petrol-700">{label} <span className="rounded-full bg-petrol-50 px-2 py-1 text-sm">{value}/10</span>
+    <label className="block font-semibold text-petrol-700">{label} <span className="rounded-full border border-petrol-100 bg-white/70 px-2 py-1 text-sm shadow-sm">{value}/10</span>
       <input className="mt-2 w-full" type="range" min="0" max="10" value={value} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
+  );
+}
+
+function TimelineItem({ title, body, active = false }: { title: string; body: string; active?: boolean }) {
+  return (
+    <div className="relative rounded-[24px] border border-petrol-100 bg-white/58 p-4">
+      <div className={`premium-timeline-dot grid size-10 place-items-center rounded-full ${active ? 'bg-petrol-500 text-white' : 'bg-petrol-50 text-petrol-700'}`}>
+        <CheckCircle2 className="size-5" />
+      </div>
+      <p className="mt-4 font-bold text-petrol-700">{title}</p>
+      <p className="mt-1 text-sm leading-relaxed text-slate-600">{body}</p>
+    </div>
   );
 }
 
