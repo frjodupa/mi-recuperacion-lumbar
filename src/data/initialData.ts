@@ -690,7 +690,7 @@ export const initialRoutines: Routine[] = [
 export const defaultPreferences: UserPreferences = {
   onboarded: false,
   acceptedMedicalNotice: false,
-  theme: 'system',
+  theme: 'light',
   textSize: 'normal',
   highContrast: false,
   soundEnabled: false,

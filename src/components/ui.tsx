@@ -1,24 +1,52 @@
 import type { ReactNode } from 'react';
-import { AlertTriangle, Check, X } from 'lucide-react';
+import { AlertTriangle, Check, Monitor, Moon, Sun, X } from 'lucide-react';
 import { safetyNotice } from '../data/initialData';
+import type { UserPreferences } from '../types';
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`print-card animate-soft glass-card premium-card-enter rounded-[28px] border p-6 hover:-translate-y-0.5 ${className}`}>{children}</section>;
+  return <section className={`ui-card print-card animate-soft premium-card-enter rounded-[28px] border p-6 ${className}`}>{children}</section>;
 }
 
 export function Button({ children, variant = 'primary', className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {
   const variants = {
-    primary: 'bg-app-primary text-white shadow-[0_10px_28px_rgba(15,92,99,0.18)] hover:bg-app-primaryDark hover:shadow-[0_14px_36px_rgba(15,92,99,0.24)] active:scale-[0.98]',
-    secondary: 'bg-app-secondary/14 text-app-primaryDark ring-1 ring-app-secondary/20 hover:bg-app-secondary/22 active:scale-[0.98]',
-    ghost: 'bg-white/60 text-app-primaryDark border border-app-border hover:bg-app-primaryLight active:scale-[0.98]',
-    danger: 'bg-white/85 text-app-danger border border-red-100 hover:bg-red-50 active:scale-[0.98]',
+    primary: 'ui-button-primary',
+    secondary: 'ui-button-secondary',
+    ghost: 'ui-button-ghost',
+    danger: 'ui-button-danger',
   };
-  return <button className={`animate-soft inline-flex items-center justify-center gap-2 rounded-[18px] px-4 py-2.5 font-semibold tracking-[-0.01em] transition disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${className}`} {...props}>{children}</button>;
+  return <button className={`ui-button animate-soft inline-flex items-center justify-center gap-2 rounded-[18px] px-4 py-2.5 font-semibold tracking-[-0.01em] transition disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${className}`} {...props}>{children}</button>;
+}
+
+export function ThemeSelector({ value, onChange, compact = false }: { value: UserPreferences['theme']; onChange: (theme: UserPreferences['theme']) => void; compact?: boolean }) {
+  const options: { value: UserPreferences['theme']; label: string; icon: typeof Sun }[] = [
+    { value: 'light', label: 'Claro', icon: Sun },
+    { value: 'dark', label: 'Oscuro', icon: Moon },
+    { value: 'system', label: 'Sistema', icon: Monitor },
+  ];
+
+  return (
+    <div className={`theme-switcher ${compact ? 'theme-switcher-compact' : ''}`} role="group" aria-label="Modo visual">
+      {options.map(({ value: option, label, icon: Icon }) => (
+        <button
+          key={option}
+          type="button"
+          className={value === option ? 'is-active' : ''}
+          onClick={() => onChange(option)}
+          aria-pressed={value === option}
+          aria-label={`Tema ${label.toLowerCase()}`}
+          title={label}
+        >
+          <Icon className="size-4" aria-hidden />
+          {!compact && <span>{label}</span>}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export function SafetyNotice() {
   return (
-    <div className="rounded-[24px] border border-amber-200/80 bg-amber-50/80 p-4 text-amber-900 shadow-sm backdrop-blur">
+    <div className="ui-alert ui-alert-warning rounded-[24px] border p-4 shadow-sm backdrop-blur">
       <div className="flex gap-3">
         <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden />
         <p className="m-0 text-sm font-semibold leading-relaxed">{safetyNotice}</p>
@@ -29,8 +57,8 @@ export function SafetyNotice() {
 
 export function Modal({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-petrol-700/40 p-4" role="dialog" aria-modal="true">
-      <div className="max-h-[92vh] w-full max-w-5xl overflow-auto rounded-[30px] border border-app-border bg-app-surface/95 p-6 shadow-2xl backdrop-blur-2xl">
+    <div className="ui-modal-backdrop fixed inset-0 z-50 grid place-items-center p-4" role="dialog" aria-modal="true">
+      <div className="ui-modal-panel max-h-[92vh] w-full max-w-5xl overflow-auto rounded-[30px] border p-6 shadow-2xl backdrop-blur-2xl">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-app-primaryDark">{title}</h2>
           <Button variant="ghost" onClick={onClose} aria-label="Cerrar"><X className="size-5" /></Button>
