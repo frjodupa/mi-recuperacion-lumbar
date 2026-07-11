@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.3 - 2026-07-11
+
+### Fixed
+- Prevented the production Service Worker from interfering with the Vite development server and HMR.
+
+### Changed
+- App version bumped to `1.0.3`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
+## 1.0.2 - 2026-07-11
+
+### Fixed
+- Fixed React hook ordering crash that could render the deployed PWA as a blank page.
+
+### Changed
+- App version bumped to `1.0.2`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
 ## 1.0.1 - 2026-07-11
 
 ### Added

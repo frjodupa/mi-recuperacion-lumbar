@@ -18,17 +18,16 @@ export default function App() {
   });
   const prefersDark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   const darkMode = state.preferences.theme === 'dark' || (state.preferences.theme === 'system' && prefersDark);
-
-  if (!state.preferences.onboarded) {
-    return <Onboarding onFinish={() => setState((current) => ({ ...current, preferences: { ...current.preferences, onboarded: true, acceptedMedicalNotice: true } }))} />;
-  }
-
   const pageClass = useMemo(() => [
     darkMode ? 'theme-dark' : 'theme-light',
     state.preferences.textSize === 'large' ? 'text-large' : '',
     state.preferences.textSize === 'xlarge' ? 'text-xlarge' : '',
     state.preferences.highContrast ? 'high-contrast' : '',
   ].filter(Boolean).join(' '), [darkMode, state.preferences.highContrast, state.preferences.textSize]);
+
+  if (!state.preferences.onboarded) {
+    return <Onboarding onFinish={() => setState((current) => ({ ...current, preferences: { ...current.preferences, onboarded: true, acceptedMedicalNotice: true } }))} />;
+  }
 
   return (
     <div className={`app-surface min-h-screen ${pageClass}`}>
