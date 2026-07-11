@@ -1,15 +1,5 @@
 # Changelog
 
-## 1.0.7 - 2026-07-11
-
-### Changed
-- Added a stable visual token system for light and dark themes across surfaces, typography, borders, shadows, alerts, modals, buttons, inputs and navigation.
-- Made light mode the default for new installations while preserving existing saved user preferences.
-- Added a visible Claro/Oscuro/Sistema theme selector in the header and desktop sidebar.
-- Applied the saved theme before the first React render to reduce visual flicker.
-- App version bumped to `1.0.7`.
-- Service worker cache version bumped to refresh the installed PWA safely.
-
 ## 1.0.6 - 2026-07-11
 
 ### Fixed
