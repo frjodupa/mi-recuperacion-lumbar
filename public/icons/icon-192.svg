@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="Mi Recuperación Lumbar">
+  <rect width="192" height="192" rx="42" fill="#0f5c63"/>
+  <circle cx="96" cy="96" r="58" fill="#e9f7f7"/>
+  <path d="M95 42c-8 18-7 30 2 45 8 13 8 26-2 48-5 11-5 18 2 25" fill="none" stroke="#0f5c63" stroke-width="12" stroke-linecap="round"/>
+  <path d="M62 91h68M67 114h58M74 68h45" stroke="#2bbdc1" stroke-width="10" stroke-linecap="round"/>
+</svg>

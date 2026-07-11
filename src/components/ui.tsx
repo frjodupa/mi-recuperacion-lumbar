@@ -1,0 +1,104 @@
+import type { ReactNode } from 'react';
+import { AlertTriangle, Check, X } from 'lucide-react';
+import { safetyNotice } from '../data/initialData';
+
+export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <section className={`print-card animate-soft rounded-[18px] border border-app-border bg-app-surface p-5 shadow-card hover:border-petrol-100 hover:shadow-soft ${className}`}>{children}</section>;
+}
+
+export function Button({ children, variant = 'primary', className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {
+  const variants = {
+    primary: 'bg-app-primary text-white shadow-sm hover:bg-app-primaryDark active:scale-[0.99]',
+    secondary: 'bg-app-secondary/15 text-app-primaryDark hover:bg-app-secondary/25 active:scale-[0.99]',
+    ghost: 'bg-app-surface text-app-primaryDark border border-app-border hover:bg-app-primaryLight active:scale-[0.99]',
+    danger: 'bg-white text-app-danger border border-red-100 hover:bg-red-50 active:scale-[0.99]',
+  };
+  return <button className={`animate-soft inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition ${variants[variant]} disabled:cursor-not-allowed disabled:opacity-50 ${className}`} {...props}>{children}</button>;
+}
+
+export function SafetyNotice() {
+  return (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+      <div className="flex gap-3">
+        <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden />
+        <p className="m-0 text-sm font-semibold leading-relaxed">{safetyNotice}</p>
+      </div>
+    </div>
+  );
+}
+
+export function Modal({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-petrol-700/40 p-4" role="dialog" aria-modal="true">
+      <div className="max-h-[92vh] w-full max-w-5xl overflow-auto rounded-2xl border border-app-border bg-app-surface p-5 shadow-2xl">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-xl font-bold text-app-primaryDark">{title}</h2>
+          <Button variant="ghost" onClick={onClose} aria-label="Cerrar"><X className="size-5" /></Button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function ConfirmDialog({ title, body, onConfirm, onCancel }: { title: string; body: string; onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <Modal title={title} onClose={onCancel}>
+      <p className="mb-5 leading-relaxed text-slate-700">{body}</p>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button onClick={onConfirm}><Check className="size-5" /> Confirmar</Button>
+        <Button variant="ghost" onClick={onCancel}>Cancelar</Button>
+      </div>
+    </Modal>
+  );
+}
+
+export function EmptyState({ title, body }: { title: string; body: string }) {
+  return <div className="rounded-2xl border border-dashed border-petrol-100 p-6 text-center"><p className="font-bold text-petrol-700">{title}</p><p className="mt-1 text-sm text-slate-600">{body}</p></div>;
+}
+
+export function PainScale({ value, onChange, label = 'Dolor' }: { value: number; onChange: (value: number) => void; label?: string }) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between">
+        <span className="font-semibold text-app-primaryDark">{label}</span>
+        <span className="rounded-full bg-petrol-50 px-3 py-1 font-bold text-petrol-700">{value}/10</span>
+      </div>
+      <input aria-label={`${label} de 0 a 10`} className="h-3 w-full accent-petrol-500" type="range" min="0" max="10" value={value} onChange={(event) => onChange(Number(event.target.value))} />
+      <div className="mt-1 flex justify-between text-xs text-slate-500"><span>0</span><span>10</span></div>
+    </div>
+  );
+}
+
+export function ProgressRing({ percent }: { percent: number }) {
+  const clamped = Math.max(0, Math.min(100, percent));
+  return (
+    <div className="grid size-24 place-items-center rounded-full" style={{ background: `conic-gradient(#2f8f69 ${clamped}%, #d9ecec 0)` }} aria-label={`${clamped}% completado`}>
+      <div className="grid size-16 place-items-center rounded-full bg-app-surface text-lg font-bold text-app-primaryDark">{clamped}%</div>
+    </div>
+  );
+}
+
+export function ExercisePhoto({ label, src }: { label: string; src?: string }) {
+  if (src) {
+    return (
+      <figure className="overflow-hidden rounded-xl border border-petrol-100 bg-petrol-50">
+        <img className="aspect-[4/3] w-full bg-petrol-50 object-cover" src={src} alt={label} loading="lazy" />
+        <figcaption className="px-3 py-2 text-center text-xs font-semibold text-app-primaryDark">{label}</figcaption>
+      </figure>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-petrol-100 bg-petrol-50 p-3">
+      <svg viewBox="0 0 220 130" className="h-28 w-full" role="img" aria-label={label}>
+        <rect x="20" y="95" width="180" height="10" rx="5" fill="#caebec" />
+        <circle cx="65" cy="48" r="16" fill="#0f5c63" />
+        <path d="M80 58 C105 65 122 75 152 70" fill="none" stroke="#0f5c63" strokeWidth="12" strokeLinecap="round" />
+        <path d="M118 74 L98 95 M138 72 L164 94" stroke="#2bbdc1" strokeWidth="11" strokeLinecap="round" />
+        <path d="M92 66 L70 88" stroke="#2bbdc1" strokeWidth="10" strokeLinecap="round" />
+      </svg>
+      <p className="mt-2 text-center text-xs font-semibold text-petrol-700">{label}</p>
+    </div>
+  );
+}
