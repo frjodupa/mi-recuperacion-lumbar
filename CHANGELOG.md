@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.7 - 2026-07-12
+
+### Changed
+- Refined only the dark visual system with a dedicated premium palette, softer card depth, improved dark inputs, dark header treatment, dark button states and polished desktop sidebar states.
+- App version bumped to `1.0.7`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
 ## 1.0.6 - 2026-07-11
 
 ### Fixed

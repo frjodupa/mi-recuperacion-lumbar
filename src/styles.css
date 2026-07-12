@@ -48,23 +48,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .high-contrast { filter: contrast(1.18); }
 
 .theme-dark {
-  --color-primary: #5dd6d8;
-  --color-primary-dark: #d7fbfb;
-  --color-primary-light: #14363b;
-  --color-secondary: #38c8cb;
-  --color-background: #071518;
-  --color-surface: #102327;
+  --color-primary: #62cfd0;
+  --color-primary-dark: #f7fafb;
+  --color-primary-light: #153540;
+  --color-secondary: #62cfd0;
+  --color-background: #08141b;
+  --color-surface: #102730;
   --color-success: #7bd8a7;
   --color-warning: #f5c46b;
   --color-danger: #ff9b91;
-  --color-text-primary: #edfafa;
-  --color-text-secondary: #b5c9cc;
-  --color-border: #24464b;
-  --glass-surface: rgba(16, 35, 39, 0.78);
-  --glass-border: rgba(93, 214, 216, 0.18);
-  --ring-track: #1d3b40;
-  --shadow-soft-ui: 0 1px 2px rgba(0, 0, 0, 0.2), 0 18px 60px rgba(0, 0, 0, 0.24);
-  --shadow-hover-ui: 0 1px 2px rgba(0, 0, 0, 0.22), 0 24px 80px rgba(0, 0, 0, 0.32);
+  --color-text-primary: #f7fafb;
+  --color-text-secondary: #b6cdd1;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --glass-surface: linear-gradient(180deg, rgba(21, 53, 64, 0.86), rgba(16, 39, 48, 0.76));
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --ring-track: #153540;
+  --shadow-soft-ui: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 18px 48px rgba(0, 0, 0, 0.22);
+  --shadow-hover-ui: 0 1px 0 rgba(255, 255, 255, 0.055) inset, 0 22px 58px rgba(0, 0, 0, 0.28);
   color-scheme: dark;
 }
 
@@ -102,9 +102,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .theme-dark input,
 .theme-dark select,
 .theme-dark textarea {
-  background-color: #0c1d21;
+  background-color: #0c2028;
   color: var(--color-text-primary);
   border-color: var(--color-border);
+}
+
+.theme-dark input::placeholder,
+.theme-dark textarea::placeholder {
+  color: rgba(182, 205, 209, 0.72);
+}
+
+.theme-dark input:not([type="range"]):focus,
+.theme-dark select:focus,
+.theme-dark textarea:focus {
+  border-color: rgba(98, 207, 208, 0.74);
+  box-shadow: 0 0 0 4px rgba(98, 207, 208, 0.11);
 }
 
 .app-surface {
@@ -117,8 +129,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .theme-dark.app-surface {
   background:
-    radial-gradient(circle at top left, rgba(56, 200, 203, 0.18), transparent 34rem),
-    linear-gradient(180deg, #09191d 0%, var(--color-background) 100%);
+    radial-gradient(circle at 12% 0%, rgba(98, 207, 208, 0.13), transparent 30rem),
+    radial-gradient(circle at 90% 6%, rgba(124, 226, 227, 0.08), transparent 28rem),
+    linear-gradient(180deg, #0a1820 0%, var(--color-background) 100%);
 }
 
 .animate-soft {
@@ -126,11 +139,135 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.theme-dark .animate-soft {
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+}
+
 .glass-card {
   background: var(--glass-surface);
   border-color: rgba(223, 231, 228, 0.82);
   box-shadow: var(--shadow-soft-ui);
   backdrop-filter: blur(22px) saturate(1.12);
+}
+
+.theme-dark .glass-card {
+  background: var(--glass-surface);
+  border-color: var(--glass-border);
+  box-shadow: var(--shadow-soft-ui);
+}
+
+.theme-dark .glass-card:hover {
+  border-color: rgba(98, 207, 208, 0.18);
+  box-shadow: var(--shadow-hover-ui);
+}
+
+.theme-dark aside > div {
+  background: rgba(16, 39, 48, 0.74) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.22);
+}
+
+.theme-dark aside > div > div:first-child {
+  background: rgba(21, 53, 64, 0.58) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark aside .space-y-1\.5 > button {
+  background: transparent !important;
+  color: #b6cdd1 !important;
+  box-shadow: none !important;
+}
+
+.theme-dark aside .space-y-1\.5 > button > span {
+  background: transparent !important;
+  color: #b6cdd1 !important;
+}
+
+.theme-dark aside .space-y-1\.5 > button:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.theme-dark aside .space-y-1\.5 > button:hover > span {
+  background: transparent !important;
+  color: #62cfd0 !important;
+}
+
+.theme-dark aside .space-y-1\.5 > button[aria-current="page"] {
+  background: #117d86 !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 30px rgba(98, 207, 208, 0.18) !important;
+}
+
+.theme-dark aside .space-y-1\.5 > button[aria-current="page"] > span {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+}
+
+.theme-dark button.bg-app-primary {
+  background: #f7fafb !important;
+  color: #083b41 !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.18) !important;
+}
+
+.theme-dark button.bg-app-primary svg {
+  color: #62cfd0;
+}
+
+.theme-dark button.bg-app-primary:hover {
+  background: #117d86 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 38px rgba(98, 207, 208, 0.20) !important;
+}
+
+.theme-dark button.bg-app-primary:hover svg {
+  color: #ffffff;
+}
+
+.theme-dark button.bg-app-secondary\/14 {
+  background: transparent !important;
+  color: #f7fafb !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: none !important;
+}
+
+.theme-dark button.bg-app-secondary\/14:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark button.bg-white\/60 {
+  background: transparent !important;
+  color: #f7fafb !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.theme-dark button.bg-white\/60:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark header .bg-white\/72 {
+  background: rgba(16, 39, 48, 0.54) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark .premium-hero {
+  background:
+    linear-gradient(135deg, rgba(21, 53, 64, 0.82), rgba(16, 39, 48, 0.68)),
+    radial-gradient(circle at 82% 16%, rgba(98, 207, 208, 0.14), transparent 18rem);
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark .premium-hero::after {
+  background: radial-gradient(circle, rgba(98, 207, 208, 0.08), transparent 64%);
+}
+
+.theme-dark .premium-kpi {
+  background: linear-gradient(180deg, rgba(21, 53, 64, 0.76), rgba(16, 39, 48, 0.72));
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
 }
 
 .premium-card-enter {
