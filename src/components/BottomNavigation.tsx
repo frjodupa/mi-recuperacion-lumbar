@@ -1,15 +1,16 @@
-import { Activity, BookOpen, ClipboardList, Home, ListChecks, Settings } from 'lucide-react';
+import { Activity, BarChart3, ClipboardList, Home, ListChecks, Settings } from 'lucide-react';
 import { ThemeSelector } from './ui';
 import type { AppState } from '../types';
 
 const items = [
   { id: 'home', label: 'Inicio', icon: Home },
-  { id: 'routine', label: 'Rutina', icon: ListChecks },
-  { id: 'exercises', label: 'Biblioteca', icon: Activity },
-  { id: 'progress', label: 'Progreso', icon: BookOpen },
-  { id: 'history', label: 'Historial', icon: ClipboardList },
-  { id: 'info', label: 'Ajustes', icon: Settings },
+  { id: 'routine', label: 'Mi plan', icon: ListChecks },
+  { id: 'history', label: 'Seguimiento', icon: ClipboardList },
+  { id: 'progress', label: 'Evolución', icon: BarChart3 },
+  { id: 'info', label: 'Perfil', icon: Settings },
+  { id: 'exercises', label: 'Ejercicios', icon: Activity },
 ] as const;
+const mobileItems = items.filter((item) => item.id !== 'exercises');
 
 export type PageId = typeof items[number]['id'];
 
@@ -17,8 +18,8 @@ export function BottomNavigation({ page, setPage, theme, onThemeChange }: { page
   return (
     <>
       <nav className="no-print fixed inset-x-0 bottom-0 z-[1000] border-t border-white/70 bg-white/78 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_50px_rgba(15,92,99,0.08)] backdrop-blur-2xl lg:hidden" aria-label="Navegación principal">
-        <div className="mx-auto grid max-w-xl grid-cols-6 gap-1 rounded-[24px] border border-petrol-100/70 bg-white/50 p-1">
-          {items.map(({ id, label, icon: Icon }) => (
+        <div className="mx-auto grid max-w-xl grid-cols-5 gap-1 rounded-[24px] border border-petrol-100/70 bg-white/50 p-1">
+          {mobileItems.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setPage(id)} className={`app-nav-button animate-soft flex min-h-14 flex-col items-center justify-center rounded-[20px] text-xs font-semibold transition active:scale-[0.96] ${page === id ? 'bg-petrol-500 text-white shadow-[0_10px_26px_rgba(15,92,99,0.18)]' : 'text-slate-500 hover:bg-white/80 hover:text-petrol-700'}`} aria-current={page === id ? 'page' : undefined}>
               <Icon className="size-5" aria-hidden />
               {label}

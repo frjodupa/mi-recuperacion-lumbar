@@ -1,6 +1,7 @@
 import { Activity, CalendarDays, CheckCircle2, ClipboardList, HeartPulse, ShieldCheck, Target } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Button, Card, SafetyNotice } from '../components/ui';
+import { ProgressIndicator } from '../components/premium';
 import type { PatientProfile } from '../types';
 
 const mobilityOptions: { value: PatientProfile['baselineMobility']; label: string }[] = [
@@ -50,6 +51,7 @@ export function Onboarding({ onFinish }: { onFinish: (profile: PatientProfile) =
   const StepIcon = steps[step].icon;
   const final = step === steps.length - 1;
   const canContinue = profile.name.trim().length > 0 && (!final || accepted);
+  const errorMessage = !profile.name.trim() ? 'Indica al menos el nombre del paciente para personalizar la app.' : final && !accepted ? 'Acepta el aviso sanitario para finalizar la configuración.' : '';
 
   const updateProfile = (patch: Partial<PatientProfile>) => {
     setProfile((current) => ({ ...current, ...patch, updatedAt: new Date().toISOString() }));
@@ -100,11 +102,14 @@ export function Onboarding({ onFinish }: { onFinish: (profile: PatientProfile) =
             </aside>
 
             <section className="p-6 sm:p-8 lg:p-10">
-              <div className="mb-6 flex items-center gap-3">
+              <div className="mb-6 space-y-5">
+                <ProgressIndicator current={step + 1} total={steps.length} />
+                <div className="flex items-center gap-3">
                 <div className="grid size-12 place-items-center rounded-2xl bg-petrol-50 text-petrol-700"><StepIcon className="size-6" /></div>
                 <div>
                   <p className="text-sm font-bold text-aqua">Paso {step + 1} de {steps.length}</p>
                   <h2 className="text-2xl font-bold tracking-[-0.03em] text-petrol-700">{steps[step].title}</h2>
+                </div>
                 </div>
               </div>
 
@@ -223,9 +228,14 @@ export function Onboarding({ onFinish }: { onFinish: (profile: PatientProfile) =
                 </div>
               )}
 
+              {errorMessage && <p className="mt-5 rounded-2xl bg-amber-50 p-3 text-sm font-semibold text-amber-900">{errorMessage}</p>}
+
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 {step > 0 && <Button className="flex-1" variant="ghost" onClick={() => setStep((current) => current - 1)}>Atrás</Button>}
-                <Button className="flex-1" disabled={!canContinue} onClick={() => final ? finish() : setStep((current) => current + 1)}>{final ? 'Guardar perfil y empezar' : 'Continuar'}</Button>
+                <Button className="flex-1" disabled={!canContinue} onClick={() => {
+                  if (!canContinue) return;
+                  final ? finish() : setStep((current) => current + 1);
+                }}>{final ? 'Guardar perfil y empezar' : 'Continuar'}</Button>
               </div>
             </section>
           </div>

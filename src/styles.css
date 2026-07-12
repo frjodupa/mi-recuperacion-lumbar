@@ -58,6 +58,45 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: 0 1px 2px rgba(13, 45, 49, 0.04);
 }
 
+.app-loading-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1rem;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(98, 207, 208, 0.2), transparent 28rem),
+    linear-gradient(180deg, #fcfdfb 0%, #f7fbfb 100%);
+  color: #0f5c63;
+  font: 700 1rem Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-loading-mark {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 1.5rem;
+  background: #0f5c63;
+  box-shadow: 0 18px 54px rgba(15, 92, 99, 0.18);
+  position: relative;
+}
+
+.app-loading-mark::before,
+.app-loading-mark::after {
+  content: "";
+  position: absolute;
+  inset: 1.25rem 0.9rem;
+  border: 3px solid #ffffff;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 999px;
+}
+
+.app-loading-mark::after {
+  inset: 1rem 1.35rem;
+  border-color: #62cfd0;
+  transform: rotate(90deg);
+}
+
 .theme-dark {
   --color-primary: #62cfd0;
   --color-primary-dark: #f7fafb;
@@ -389,6 +428,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .exercise-transition {
   animation: exercise-in 260ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .sticky-progress {

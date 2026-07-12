@@ -1,9 +1,11 @@
-const CACHE_NAME = 'mi-recuperacion-lumbar-v11-1-0-7';
+const CACHE_NAME = 'mi-recuperacion-lumbar-v12-premium-dashboard';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/offline.html',
   '/manifest.json',
+  '/manifest.webmanifest',
+  '/favicon.svg',
   '/icons/icon-192.svg',
   '/icons/icon-512.svg',
   '/exercise-photos/diaphragmatic-breathing.jpg',

@@ -1,8 +1,9 @@
-import { CalendarDays, CheckCircle2, Flame, MessageCircle, Play, Search, Sparkles, Target, TimerReset } from 'lucide-react';
+import { CalendarDays, CheckCircle2, Flame, MessageCircle, Search, Target, TimerReset } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { AppState, DailyCheckIn } from '../types';
-import { Button, Card, PainScale, ProgressRing, SafetyNotice } from '../components/ui';
+import { Button, Card, PainScale, SafetyNotice } from '../components/ui';
 import type { PageId } from '../components/BottomNavigation';
+import { DashboardHeader, NextActivityCard, RecoveryProgressCard, StatusTodayCard, TodayPlanCard, WeeklySummaryCard } from '../components/dashboard';
 
 const moods = ['Tranquilo', 'Animado', 'Cansado', 'Preocupado', 'Irritable'];
 const quotes = ['La recuperación no consiste en correr, sino en avanzar con seguridad.', 'Cada movimiento controlado cuenta.', 'La constancia vale más que la intensidad.', 'Escucha tu cuerpo y respeta tu proceso.'];
@@ -26,6 +27,8 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   const patientName = state.patientProfile?.name || state.preferences.patientName?.trim() || 'José';
   const quote = quotes[new Date().getDay() % quotes.length];
   const timeContent = getTimeContent(localTime.getHours());
+  const formattedToday = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+  const activePhase = state.preferences.activePhase.replace('fase-', 'Fase ');
 
   const updateCheckIn = (patch: Partial<DailyCheckIn>) => {
     setState((current) => ({ ...current, checkIns: [...current.checkIns.filter((item) => item.date !== today), { ...checkIn, ...patch, recommendedRoutineId: recommendedRoutine.id }] }));
@@ -36,43 +39,27 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
       <SafetyNotice />
 
       <Card className="premium-hero p-6 sm:p-8 lg:p-10">
-        <div className="relative z-10 grid min-w-0 gap-8 2xl:grid-cols-[minmax(0,1fr)_340px] 2xl:items-center">
-          <div className="min-w-0 space-y-6">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-petrol-100 bg-white/70 px-3 py-1 text-sm font-bold text-petrol-700 shadow-sm"><CalendarDays className="size-4" /> Asistente diario</p>
-              <h2 className="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">{timeContent.greeting}, {patientName}.</h2>
-              <p className="mt-3 text-lg text-slate-600">{new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}</p>
-              <p className="motivational-message mt-2 flex items-start gap-2 text-sm font-medium leading-relaxed text-slate-500 sm:items-center sm:text-base">
-                <Sparkles className="mt-0.5 size-4 shrink-0 text-aqua sm:mt-0" aria-hidden />
-                <span>{timeContent.message}</span>
-              </p>
-            </div>
-            <div className="dashboard-kpi-grid">
-              <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
-              <Metric icon={TimerReset} label="Tiempo total rehabilitado" value={`${totalMinutes} min`} tone="petrol" />
-              <Metric icon={Flame} label="Racha de días" value={`${streak} d`} tone="green" />
-              <Metric icon={Target} label="Objetivo diario" value={`${dailyGoal} min`} tone="slate" />
-            </div>
-            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div className="rounded-[28px] border border-white/70 bg-white/70 p-5 shadow-sm backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Sesión recomendada</p>
-                <p className="mt-1 text-xl font-bold tracking-[-0.02em] text-petrol-700">{recommendedRoutine.name}</p>
-                <p className="mt-1 text-sm text-slate-600">{recommendedRoutine.exercises.length} ejercicios programados · enfoque suave y controlado</p>
-              </div>
-              <Button className="w-full px-6 py-4 text-base sm:w-auto" onClick={() => setPage('routine')}><Play className="size-5" /> Comenzar</Button>
-            </div>
-          </div>
-          <div className="dashboard-progress-panel mx-auto grid place-items-center gap-4 rounded-[32px] border border-white/70 bg-white/58 p-6 shadow-soft backdrop-blur 2xl:mx-0">
-            <ProgressRing percent={percent} />
-            <div className="text-center">
-              <p className="font-bold text-petrol-700">Progreso de hoy</p>
-              <p className="text-sm text-slate-600">{session?.completedExerciseIds.length || 0} ejercicios completados</p>
-            </div>
+        <div className="relative z-10">
+          <DashboardHeader greeting={timeContent.greeting} name={patientName} date={formattedToday} message={timeContent.message} />
+          <div className="dashboard-kpi-grid mt-8">
+            <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
+            <Metric icon={TimerReset} label="Tiempo total rehabilitado" value={`${totalMinutes} min`} tone="petrol" />
+            <Metric icon={Flame} label="Racha de días" value={`${streak} d`} tone="green" />
+            <Metric icon={Target} label="Objetivo diario" value={`${dailyGoal} min`} tone="slate" />
           </div>
         </div>
       </Card>
 
-      <Card className="p-6 sm:p-7">
+      <div className="grid gap-5 xl:grid-cols-2">
+        <StatusTodayCard checkIn={checkIn} onRegister={() => document.getElementById('daily-check-in')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
+        <RecoveryProgressCard days={surgeryDays} phase={activePhase} percent={percent} />
+        <TodayPlanCard routine={recommendedRoutine} completed={session?.completedExerciseIds.length || 0} onStart={() => setPage('routine')} onExplore={() => setPage('exercises')} />
+        <NextActivityCard routine={recommendedRoutine} exercises={state.exercises} />
+      </div>
+
+      <WeeklySummaryCard sessions={state.sessions} setPage={setPage} />
+
+      <Card id="daily-check-in" className="p-6 sm:p-7">
         <h3 className="text-xl font-bold text-petrol-700">Antes de comenzar</h3>
         <p className="mt-1 text-sm text-slate-600">Estos datos ayudan a contextualizar la sesión y el historial médico.</p>
         <div className="mt-6 grid gap-5 lg:grid-cols-2">

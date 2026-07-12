@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { AlertTriangle, Check, Monitor, Moon, Sun, X } from 'lucide-react';
 import { safetyNotice } from '../data/initialData';
 import type { UserPreferences } from '../types';
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`print-card animate-soft glass-card premium-card-enter rounded-[28px] border p-6 hover:-translate-y-0.5 ${className}`}>{children}</section>;
+export function Card({ children, className = '', ...props }: HTMLAttributes<HTMLElement> & { children: ReactNode }) {
+  return <section className={`print-card animate-soft glass-card premium-card-enter rounded-[28px] border p-6 hover:-translate-y-0.5 ${className}`} {...props}>{children}</section>;
 }
 
 export function Button({ children, variant = 'primary', className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {

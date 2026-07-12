@@ -1,5 +1,5 @@
-import { BottomNavigation, type PageId } from './components/BottomNavigation';
-import { Header } from './components/Header';
+import type { PageId } from './components/BottomNavigation';
+import { AppShell } from './components/AppShell';
 import { Onboarding } from './pages/Onboarding';
 import { Home } from './pages/Home';
 import { RoutinePage } from './pages/RoutinePage';
@@ -48,19 +48,13 @@ export default function App() {
   }
 
   return (
-    <div className={`app-surface min-h-screen ${pageClass}`}>
-      <div className="safe-area-shell mx-auto flex w-full max-w-[1500px] gap-6 px-4 py-6 pb-36 lg:px-6 lg:pb-10">
-        <main className="w-full min-w-0 flex-1">
-          <Header theme={state.preferences.theme} onThemeChange={setTheme} />
-          {page === 'home' && <Home state={state} setState={setState} setPage={setPage} />}
-          {page === 'routine' && <RoutinePage state={state} setState={setState} />}
-          {page === 'exercises' && <ExercisesPage state={state} setState={setState} />}
-          {page === 'progress' && <ProgressPage state={state} />}
-          {page === 'history' && <MedicalHistoryPage state={state} />}
-          {page === 'info' && <InfoPage state={state} setState={setState} />}
-        </main>
-        <BottomNavigation page={page} setPage={setPage} theme={state.preferences.theme} onThemeChange={setTheme} />
-      </div>
-    </div>
+    <AppShell page={page} setPage={setPage} theme={state.preferences.theme} onThemeChange={setTheme} className={pageClass}>
+      {page === 'home' && <Home state={state} setState={setState} setPage={setPage} />}
+      {page === 'routine' && <RoutinePage state={state} setState={setState} />}
+      {page === 'exercises' && <ExercisesPage state={state} setState={setState} />}
+      {page === 'progress' && <ProgressPage state={state} />}
+      {page === 'history' && <MedicalHistoryPage state={state} />}
+      {page === 'info' && <InfoPage state={state} setState={setState} />}
+    </AppShell>
   );
 }
