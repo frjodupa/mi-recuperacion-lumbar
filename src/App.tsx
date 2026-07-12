@@ -9,6 +9,7 @@ import { MedicalHistoryPage } from './pages/MedicalHistoryPage';
 import { InfoPage } from './pages/InfoPage';
 import { usePersistentState } from './hooks/usePersistentState';
 import { useMemo, useState } from 'react';
+import type { AppState, PatientProfile } from './types';
 
 export default function App() {
   const [state, setState] = usePersistentState();
@@ -24,16 +25,33 @@ export default function App() {
     state.preferences.textSize === 'xlarge' ? 'text-xlarge' : '',
     state.preferences.highContrast ? 'high-contrast' : '',
   ].filter(Boolean).join(' '), [darkMode, state.preferences.highContrast, state.preferences.textSize]);
+  const setTheme = (theme: AppState['preferences']['theme']) => {
+    setState((current) => ({ ...current, preferences: { ...current.preferences, theme } }));
+  };
+
+  const finishOnboarding = (patientProfile: PatientProfile) => {
+    setState((current) => ({
+      ...current,
+      patientProfile,
+      preferences: {
+        ...current.preferences,
+        onboarded: true,
+        acceptedMedicalNotice: true,
+        patientName: patientProfile.name,
+        surgeryDate: patientProfile.surgeryDate || current.preferences.surgeryDate,
+      },
+    }));
+  };
 
   if (!state.preferences.onboarded) {
-    return <Onboarding onFinish={() => setState((current) => ({ ...current, preferences: { ...current.preferences, onboarded: true, acceptedMedicalNotice: true } }))} />;
+    return <Onboarding onFinish={finishOnboarding} />;
   }
 
   return (
     <div className={`app-surface min-h-screen ${pageClass}`}>
       <div className="safe-area-shell mx-auto flex w-full max-w-[1500px] gap-6 px-4 py-6 pb-36 lg:px-6 lg:pb-10">
         <main className="w-full min-w-0 flex-1">
-          <Header />
+          <Header theme={state.preferences.theme} onThemeChange={setTheme} />
           {page === 'home' && <Home state={state} setState={setState} setPage={setPage} />}
           {page === 'routine' && <RoutinePage state={state} setState={setState} />}
           {page === 'exercises' && <ExercisesPage state={state} setState={setState} />}
@@ -41,7 +59,7 @@ export default function App() {
           {page === 'history' && <MedicalHistoryPage state={state} />}
           {page === 'info' && <InfoPage state={state} setState={setState} />}
         </main>
-        <BottomNavigation page={page} setPage={setPage} />
+        <BottomNavigation page={page} setPage={setPage} theme={state.preferences.theme} onThemeChange={setTheme} />
       </div>
     </div>
   );

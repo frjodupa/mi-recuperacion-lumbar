@@ -1,4 +1,4 @@
-import type { AppState, EquipmentProfile, Exercise, RehabilitationPhase, Routine, Session, UserPreferences } from '../types';
+import type { AppState, EquipmentProfile, Exercise, PatientProfile, RehabilitationPhase, Routine, Session, UserPreferences } from '../types';
 
 export const safetyNotice = 'Realiza únicamente los ejercicios autorizados por tu médico o fisioterapeuta. Detén la actividad si aparece dolor agudo, pérdida de fuerza, adormecimiento progresivo o cualquier síntoma nuevo.';
 
@@ -705,6 +705,24 @@ export const defaultPreferences: UserPreferences = {
   syncReady: true,
 };
 
+export const defaultPatientProfile: PatientProfile = {
+  name: 'José',
+  baselinePain: 2,
+  baselineStiffness: 2,
+  baselineFatigue: 3,
+  baselineMobility: 'limited',
+  sleepHours: 7,
+  sleepQuality: 7,
+  medicalExerciseAuthorization: 'unknown',
+  hasProfessionalRoutine: false,
+  goals: ['Reducir dolor', 'Mejorar movilidad', 'Recuperar confianza al caminar'],
+  dailyGoalMinutes: 20,
+  weeklyRehabDays: 5,
+  remindersEnabled: false,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
 const today = new Date();
 export const demoSessions: Session[] = Array.from({ length: 7 }, (_, index) => {
   const date = new Date(today);
@@ -729,5 +747,6 @@ export const initialAppState: AppState = {
   routines: initialRoutines,
   sessions: demoSessions,
   checkIns: [],
+  patientProfile: defaultPatientProfile,
   preferences: defaultPreferences,
 };

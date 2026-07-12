@@ -22,6 +22,7 @@ export function InfoPage({ state, setState }: { state: AppState; setState: React
   const [confirmReset, setConfirmReset] = useState(false);
   const [phaseConfirm, setPhaseConfirm] = useState<PhaseId | null>(null);
   const [importError, setImportError] = useState('');
+  const [showFaq, setShowFaq] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const latestBackup = getLatestBackup();
 
@@ -47,10 +48,72 @@ export function InfoPage({ state, setState }: { state: AppState; setState: React
       },
     }));
   };
+  const updatePatientProfile = (patch: Partial<NonNullable<AppState['patientProfile']>>) => {
+    setState((current) => {
+      const now = new Date().toISOString();
+      const patientProfile = {
+        name: current.preferences.patientName || 'José',
+        baselinePain: 2,
+        baselineStiffness: 2,
+        baselineFatigue: 3,
+        baselineMobility: 'limited' as const,
+        medicalExerciseAuthorization: 'unknown' as const,
+        hasProfessionalRoutine: false,
+        goals: ['Reducir dolor'],
+        dailyGoalMinutes: 20,
+        weeklyRehabDays: 5,
+        remindersEnabled: false,
+        createdAt: now,
+        ...current.patientProfile,
+        ...patch,
+        updatedAt: now,
+      };
+      return {
+        ...current,
+        patientProfile,
+        preferences: {
+          ...current.preferences,
+          patientName: patch.name || current.preferences.patientName,
+          surgeryDate: patch.surgeryDate || current.preferences.surgeryDate,
+        },
+      };
+    });
+  };
 
   return (
     <div className="space-y-5">
-      <div><h2 className="text-3xl font-bold text-petrol-700">Información</h2><p className="text-slate-600">Seguridad, privacidad, fases y configuración.</p></div>
+      <div><h2 className="text-3xl font-bold text-petrol-700">Ajustes</h2><p className="text-slate-600">Preguntas frecuentes, seguridad, privacidad, fases y configuración.</p></div>
+      <Card className="p-5 sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-aqua">Ayuda rápida</p>
+            <h3 className="mt-1 text-2xl font-bold tracking-[-0.03em] text-petrol-700">Preguntas frecuentes</h3>
+            <p className="mt-1 text-sm text-slate-600">{sections.length} respuestas sobre uso, seguridad y registro clínico.</p>
+          </div>
+          <button
+            type="button"
+            className="animate-soft inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-2xl border border-petrol-100 bg-petrol-500 px-5 font-bold text-white shadow-sm hover:-translate-y-0.5 hover:bg-petrol-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aqua"
+            onClick={() => setShowFaq((current) => !current)}
+            aria-expanded={showFaq}
+          >
+            {showFaq ? 'Ocultar' : 'Ver preguntas'}
+            <span className="grid size-7 place-items-center rounded-full bg-white/16 text-lg leading-none">{showFaq ? '−' : '+'}</span>
+          </button>
+        </div>
+        {showFaq && (
+          <div className="mt-5 grid gap-3 border-t border-petrol-100 pt-5">
+            {sections.map(([title, body]) => (
+              <details key={title} className="group rounded-2xl border border-petrol-100 bg-white/60 p-4 shadow-sm transition open:bg-petrol-50">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-petrol-700">
+                  <span>{title}</span>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white text-petrol-700 transition group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-3 max-w-4xl leading-relaxed text-slate-600">{body}</p>
+              </details>
+            ))}
+          </div>
+        )}
+      </Card>
       <SafetyNotice />
       <Card className="border-amber-200 bg-amber-50"><h3 className="flex items-center gap-2 text-xl font-bold text-amber-900"><AlertTriangle className="size-5" /> Detén el ejercicio y consulta con un profesional si aparece alguno de estos síntomas:</h3><ul className="mt-3 grid gap-1 text-sm font-semibold text-amber-900 sm:grid-cols-2"><li>Dolor intenso o repentino.</li><li>Dolor que aumenta claramente con el ejercicio.</li><li>Pérdida de fuerza.</li><li>Hormigueo o adormecimiento progresivo.</li><li>Alteraciones del control de esfínteres.</li><li>Fiebre.</li><li>Problemas en la cicatriz.</li><li>Mareo o dificultad respiratoria.</li><li>Síntomas nuevos en las piernas.</li></ul></Card>
       <Card><h3 className="text-xl font-bold text-petrol-700">Configuración por fases</h3><p className="mt-1 text-sm font-semibold text-amber-800">El cambio de fase debe confirmarlo tu médico o fisioterapeuta.</p><div className="mt-3 grid gap-3 sm:grid-cols-3">{phases.map((phase) => <button key={phase.id} onClick={() => setPhaseConfirm(phase.id)} className={`rounded-xl border p-4 text-left ${state.preferences.activePhase === phase.id ? 'border-petrol-500 bg-petrol-50' : 'border-petrol-100 bg-white'}`}><span className="font-bold text-petrol-700">{phase.name}</span><span className="mt-1 block text-sm text-slate-600">{phase.description}</span><span className="mt-3 block rounded-lg bg-white px-3 py-2 text-center text-sm font-bold text-petrol-700">Cambiar de fase</span></button>)}</div></Card>
@@ -76,8 +139,8 @@ export function InfoPage({ state, setState }: { state: AppState; setState: React
       <Card>
         <h3 className="text-xl font-bold text-petrol-700">Preferencias premium</h3>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label className="font-semibold text-slate-700">Nombre del paciente<input className="mt-1 block min-h-11 w-full rounded-xl border border-petrol-100 p-3" value={state.preferences.patientName || ''} onChange={(event) => setState((current) => ({ ...current, preferences: { ...current.preferences, patientName: event.target.value } }))} /></label>
-          <label className="font-semibold text-slate-700">Fecha de operación<input className="mt-1 block min-h-11 w-full rounded-xl border border-petrol-100 p-3" type="date" value={state.preferences.surgeryDate || ''} onChange={(event) => setState((current) => ({ ...current, preferences: { ...current.preferences, surgeryDate: event.target.value } }))} /></label>
+          <label className="font-semibold text-slate-700">Nombre del paciente<input className="mt-1 block min-h-11 w-full rounded-xl border border-petrol-100 p-3" value={state.patientProfile?.name || state.preferences.patientName || ''} onChange={(event) => updatePatientProfile({ name: event.target.value })} /></label>
+          <label className="font-semibold text-slate-700">Fecha de operación<input className="mt-1 block min-h-11 w-full rounded-xl border border-petrol-100 p-3" type="date" value={state.patientProfile?.surgeryDate || state.preferences.surgeryDate || ''} onChange={(event) => updatePatientProfile({ surgeryDate: event.target.value })} /></label>
           <label className="font-semibold text-slate-700">Modo visual <select className="mt-1 block w-full rounded-xl border border-petrol-100 p-3" value={state.preferences.theme} onChange={(event) => setState((current) => ({ ...current, preferences: { ...current.preferences, theme: event.target.value as AppState['preferences']['theme'] } }))}><option value="system">Según el sistema</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></label>
           <label className="font-semibold text-slate-700">Tamaño de texto <select className="mt-1 block w-full rounded-xl border border-petrol-100 p-3" value={state.preferences.textSize} onChange={(event) => setState((current) => ({ ...current, preferences: { ...current.preferences, textSize: event.target.value as AppState['preferences']['textSize'] } }))}><option value="normal">Normal</option><option value="large">Grande</option><option value="xlarge">Muy grande</option></select></label>
           {(['highContrast', 'soundEnabled', 'relaxingSoundEnabled', 'voiceGuidanceEnabled', 'vibrationEnabled', 'restMode', 'autoBackupEnabled'] as const).map((key) => <label key={key} className="flex items-center gap-3 rounded-xl border border-petrol-100 p-3 font-semibold text-slate-700"><input className="size-5 accent-petrol-500" type="checkbox" checked={Boolean(state.preferences[key])} onChange={(event) => setState((current) => ({ ...current, preferences: { ...current.preferences, [key]: event.target.checked } }))} /> {labels[key]}</label>)}
@@ -91,7 +154,6 @@ export function InfoPage({ state, setState }: { state: AppState; setState: React
         {importError && <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm font-semibold text-app-danger">{importError}</p>}
         <input ref={fileInput} className="hidden" type="file" accept="application/json" onChange={(event) => event.target.files?.[0] && importJson(event.target.files[0])} />
       </Card>
-      <div className="space-y-3">{sections.map(([title, body]) => <details key={title} className="rounded-2xl border border-petrol-100 bg-white p-4 shadow-soft"><summary className="cursor-pointer font-bold text-petrol-700">{title}</summary><p className="mt-3 leading-relaxed text-slate-600">{body}</p></details>)}</div>
       {confirmReset && <ConfirmDialog title="Reiniciar progreso" body="Esta acción borra la información guardada en este dispositivo. No se puede deshacer." onConfirm={() => { clearState(); location.reload(); }} onCancel={() => setConfirmReset(false)} />}
       {phaseConfirm && <ConfirmDialog title="Cambiar de fase" body="Confirma este cambio solo si tu médico o fisioterapeuta lo ha autorizado." onConfirm={() => { setState((current) => ({ ...current, preferences: { ...current.preferences, activePhase: phaseConfirm } })); setPhaseConfirm(null); }} onCancel={() => setPhaseConfirm(null)} />}
     </div>

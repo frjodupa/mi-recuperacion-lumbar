@@ -47,6 +47,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .text-xlarge { font-size: 20px; }
 .high-contrast { filter: contrast(1.18); }
 
+.field-input {
+  min-height: 2.75rem;
+  width: 100%;
+  border-radius: 0.875rem;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.75rem 0.875rem;
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px rgba(13, 45, 49, 0.04);
+}
+
 .theme-dark {
   --color-primary: #62cfd0;
   --color-primary-dark: #f7fafb;
@@ -73,16 +84,35 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background-color: var(--color-surface) !important;
 }
 
+.theme-dark .bg-white\/95,
+.theme-dark .bg-white\/85,
+.theme-dark .bg-white\/80,
+.theme-dark .bg-white\/78,
+.theme-dark .bg-white\/72,
+.theme-dark .bg-white\/70,
+.theme-dark .bg-white\/60,
+.theme-dark .bg-white\/58,
+.theme-dark .bg-white\/50,
+.theme-dark .bg-white\/48 {
+  background: linear-gradient(180deg, rgba(21, 53, 64, 0.88), rgba(16, 39, 48, 0.82)) !important;
+}
+
 .theme-dark .bg-petrol-50,
 .theme-dark .bg-green-50,
 .theme-dark .bg-amber-50,
-.theme-dark .bg-red-50 {
+.theme-dark .bg-red-50,
+.theme-dark .bg-slate-50,
+.theme-dark .bg-slate-100,
+.theme-dark .bg-gray-50,
+.theme-dark .bg-gray-100 {
   background-color: rgba(56, 200, 203, 0.10) !important;
 }
 
 .theme-dark .text-petrol-700,
 .theme-dark .text-petrol-600,
 .theme-dark .text-app-primaryDark,
+.theme-dark .text-slate-900,
+.theme-dark .text-slate-800,
 .theme-dark .text-slate-700 {
   color: var(--color-text-primary) !important;
 }
@@ -99,12 +129,34 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-color: var(--color-border) !important;
 }
 
-.theme-dark input,
+.theme-dark .border-white\/70,
+.theme-dark .border-white\/60,
+.theme-dark .border-white\/50 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark input:not([type="range"]),
 .theme-dark select,
 .theme-dark textarea {
-  background-color: #0c2028;
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
+  background-color: #0c2028 !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  color-scheme: dark;
+}
+
+.theme-dark input.bg-transparent,
+.theme-dark textarea.bg-transparent {
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+.theme-dark input[type="number"] {
+  background: linear-gradient(180deg, rgba(12, 32, 40, 0.98), rgba(8, 20, 27, 0.96)) !important;
+}
+
+.theme-dark input[type="number"].bg-transparent {
+  background: transparent !important;
 }
 
 .theme-dark input::placeholder,

@@ -72,12 +72,25 @@ function migrateState(state: AppState): AppState {
         exercises: routine.exercises.filter((exercise) => !unavailableExerciseIds.has(exercise.exerciseId)),
       })),
   ];
+  const now = new Date().toISOString();
+  const basePatientProfile = initialAppState.patientProfile!;
+  const patientProfile: AppState['patientProfile'] = {
+    ...basePatientProfile,
+    ...state.patientProfile,
+    name: state.patientProfile?.name || state.preferences?.patientName || basePatientProfile.name,
+    surgeryDate: state.patientProfile?.surgeryDate || state.preferences?.surgeryDate,
+    updatedAt: state.patientProfile?.updatedAt || now,
+    createdAt: state.patientProfile?.createdAt || now,
+  };
 
   return {
     ...state,
+    patientProfile,
     preferences: {
       ...initialAppState.preferences,
       ...state.preferences,
+      patientName: state.preferences?.patientName || patientProfile.name,
+      surgeryDate: state.preferences?.surgeryDate || patientProfile.surgeryDate,
       equipment,
     },
     checkIns: (state.checkIns || []).map((checkIn) => ({

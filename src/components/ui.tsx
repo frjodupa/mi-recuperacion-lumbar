@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { AlertTriangle, Check, X } from 'lucide-react';
+import { AlertTriangle, Check, Monitor, Moon, Sun, X } from 'lucide-react';
 import { safetyNotice } from '../data/initialData';
+import type { UserPreferences } from '../types';
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <section className={`print-card animate-soft glass-card premium-card-enter rounded-[28px] border p-6 hover:-translate-y-0.5 ${className}`}>{children}</section>;
@@ -14,6 +15,31 @@ export function Button({ children, variant = 'primary', className = '', ...props
     danger: 'bg-white/85 text-app-danger border border-red-100 hover:bg-red-50 active:scale-[0.98]',
   };
   return <button className={`ui-button ui-button-${variant} animate-soft inline-flex items-center justify-center gap-2 rounded-[18px] px-4 py-2.5 font-semibold tracking-[-0.01em] transition disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${className}`} {...props}>{children}</button>;
+}
+
+export function ThemeSelector({ value, onChange }: { value: UserPreferences['theme']; onChange: (theme: UserPreferences['theme']) => void }) {
+  const options: { value: UserPreferences['theme']; label: string; icon: typeof Sun }[] = [
+    { value: 'light', label: 'Claro', icon: Sun },
+    { value: 'dark', label: 'Oscuro', icon: Moon },
+    { value: 'system', label: 'Sistema', icon: Monitor },
+  ];
+
+  return (
+    <div className="grid grid-cols-3 gap-1 rounded-2xl border border-petrol-100/70 bg-white/70 p-1 shadow-card backdrop-blur-xl" role="group" aria-label="Modo visual">
+      {options.map(({ value: option, label, icon: Icon }) => (
+        <button
+          key={option}
+          type="button"
+          className={`animate-soft inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold transition ${value === option ? 'bg-petrol-500 text-white shadow-sm' : 'text-petrol-700 hover:bg-petrol-50'}`}
+          onClick={() => onChange(option)}
+          aria-pressed={value === option}
+        >
+          <Icon className="size-4" aria-hidden />
+          <span>{label}</span>
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export function SafetyNotice() {

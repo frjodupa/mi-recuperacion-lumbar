@@ -162,6 +162,41 @@ export interface PainRecord {
   after: number;
 }
 
+export interface PatientProfile {
+  name: string;
+  birthDate?: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
+  heightCm?: number;
+  weightKg?: number;
+
+  surgeryType?: string;
+  surgeryDate?: string;
+  lumbarLevel?: string;
+  hospital?: string;
+  professionalName?: string;
+  rehabilitationStartDate?: string;
+
+  baselinePain: number;
+  baselineStiffness: number;
+  baselineFatigue: number;
+  baselineMobility: 'very-limited' | 'limited' | 'moderate' | 'good';
+  sleepHours?: number;
+  sleepQuality?: number;
+
+  medicalExerciseAuthorization: 'yes' | 'no' | 'unknown';
+  hasProfessionalRoutine: boolean;
+
+  goals: string[];
+  dailyGoalMinutes: number;
+  weeklyRehabDays: number;
+  preferredSessionTime?: string;
+  remindersEnabled: boolean;
+
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface UserPreferences {
   onboarded: boolean;
   acceptedMedicalNotice: boolean;
@@ -193,5 +228,6 @@ export interface AppState {
   routines: Routine[];
   sessions: Session[];
   checkIns: DailyCheckIn[];
+  patientProfile?: PatientProfile;
   preferences: UserPreferences;
 }

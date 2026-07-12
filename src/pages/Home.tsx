@@ -21,8 +21,9 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   const percent = Math.round(((session?.completedExerciseIds.length || 0) / Math.max(1, recommendedRoutine.exercises.length)) * 100);
   const totalMinutes = state.sessions.reduce((sum, item) => sum + item.durationMinutes, 0);
   const streak = calculateCurrentStreak(state.sessions);
-  const dailyGoal = Math.max(1, Math.round((recommendedRoutine.exercises.length || 1) * 3));
-  const surgeryDays = getDaysSince(state.preferences.surgeryDate);
+  const dailyGoal = state.patientProfile?.dailyGoalMinutes || Math.max(1, Math.round((recommendedRoutine.exercises.length || 1) * 3));
+  const surgeryDays = getDaysSince(state.patientProfile?.surgeryDate || state.preferences.surgeryDate);
+  const patientName = state.patientProfile?.name || state.preferences.patientName?.trim() || 'José';
   const quote = quotes[new Date().getDay() % quotes.length];
   const timeContent = getTimeContent(localTime.getHours());
 
@@ -39,7 +40,7 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
           <div className="min-w-0 space-y-6">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border border-petrol-100 bg-white/70 px-3 py-1 text-sm font-bold text-petrol-700 shadow-sm"><CalendarDays className="size-4" /> Asistente diario</p>
-              <h2 className="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">{timeContent.greeting}, {state.preferences.patientName?.trim() || 'José'}.</h2>
+              <h2 className="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">{timeContent.greeting}, {patientName}.</h2>
               <p className="mt-3 text-lg text-slate-600">{new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}</p>
               <p className="motivational-message mt-2 flex items-start gap-2 text-sm font-medium leading-relaxed text-slate-500 sm:items-center sm:text-base">
                 <Sparkles className="mt-0.5 size-4 shrink-0 text-aqua sm:mt-0" aria-hidden />
@@ -158,9 +159,9 @@ function LocalAssistant({ state }: { state: AppState }) {
     <Card>
       <h3 className="flex items-center gap-2 text-xl font-bold text-petrol-700"><MessageCircle className="size-5" /> Asistente local</h3>
       <p className="mt-1 text-sm text-slate-600">Responde sobre uso de la app, ejercicios, rutinas, historial y progreso. No realiza diagnósticos.</p>
-      <label className="mt-3 flex items-center gap-2 rounded-xl border border-petrol-100 bg-white px-3">
-        <Search className="size-5 text-slate-500" />
-        <input className="min-h-12 flex-1 border-0 bg-transparent outline-none" placeholder="Buscar ejercicio, rutina o duda de uso" value={query} onChange={(event) => setQuery(event.target.value)} />
+      <label className="mt-3 flex items-center gap-3 rounded-xl border border-petrol-100 bg-white px-4">
+        <Search className="size-5 shrink-0 text-slate-500" />
+        <input className="min-h-12 flex-1 border-0 bg-transparent pl-1 outline-none" placeholder="Buscar ejercicio, rutina o duda de uso" value={query} onChange={(event) => setQuery(event.target.value)} />
       </label>
       {query && <div className="mt-3 rounded-xl bg-petrol-50 p-4 text-sm leading-relaxed text-slate-700">{answer}</div>}
     </Card>
@@ -202,6 +203,6 @@ function getLocalAssistantAnswer(query: string, state: AppState) {
   if (normalized.includes('dolor')) return 'El dolor se registra antes y después de cada sesión para observar tolerancia. Si aparece dolor intenso o síntomas nuevos, detén la sesión y consulta con un profesional.';
   if (normalized.includes('rutina')) return `Tienes ${state.routines.length} rutinas. La rutina recomendada hoy se elige por día asignado y puede cambiarse desde la pantalla Rutina.`;
   if (normalized.includes('progreso') || normalized.includes('historial')) return `Hay ${state.sessions.length} sesiones registradas con dolor, fatiga, ejercicios y observaciones. Consulta Progreso o Historial médico para el detalle.`;
-  if (normalized.includes('material') || normalized.includes('banco') || normalized.includes('pesas')) return 'El material disponible se configura en Información. La biblioteca filtra banco, mancuernas y bandas según esa configuración.';
+  if (normalized.includes('material') || normalized.includes('banco') || normalized.includes('pesas')) return 'El material disponible se configura en Ajustes. La biblioteca filtra banco, mancuernas y bandas según esa configuración.';
   return 'Puedo ayudarte a encontrar ejercicios, explicar rutinas, interpretar el historial de la app y localizar opciones. No sustituyo a un profesional sanitario ni doy diagnósticos.';
 }
