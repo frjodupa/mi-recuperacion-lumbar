@@ -9,6 +9,19 @@ This repository contains a React, TypeScript, and Vite PWA for lumbar rehabilita
 - Follow the current Tailwind-based UI patterns and reuse shared components from [src/components](src/components) when possible.
 - Keep user-facing copy in Spanish unless there is a strong reason to change it.
 
+## VS Code local workflow
+- Work only on the local project copy opened in Visual Studio Code, not on the published Vercel version.
+- Before modifying files, state exactly which files will change and briefly why, then wait for user approval.
+- After approval, modify only the approved files and keep the change as small as possible.
+- Keep the development server available with `npm run dev` when visual review is needed.
+- After each change, provide the local URL shown by Vite, usually `http://127.0.0.1:5174/` or the next available port.
+- Run `npm run build` before considering an app change complete. For documentation-only changes, note that the build was run to confirm the project still compiles.
+- If a change affects design, state exactly what the user should inspect visually.
+- Do not create commits, push, merge, restore, switch branches, or update dependencies unless the user explicitly asks.
+- If duplicate code, reusable components, or architecture improvements are found, propose them first and wait for approval before implementing.
+- If a change could break existing functionality, warn the user before making it.
+- Treat this as a professional React + TypeScript + Vite PWA and preserve accessibility, performance, responsive behavior, offline behavior, and local data compatibility.
+
 ## Key entry points
 - [src/App.tsx](src/App.tsx) for the app shell and page routing.
 - [src/pages/ExercisesPage.tsx](src/pages/ExercisesPage.tsx) for exercise-library filters and routine actions.
