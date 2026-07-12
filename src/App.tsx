@@ -4,6 +4,7 @@ import { Onboarding } from './pages/Onboarding';
 import { Home } from './pages/Home';
 import { RoutinePage } from './pages/RoutinePage';
 import { ExercisesPage } from './pages/ExercisesPage';
+import { TrainingCenterPage } from './pages/TrainingCenterPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { MedicalHistoryPage } from './pages/MedicalHistoryPage';
 import { InfoPage } from './pages/InfoPage';
@@ -15,7 +16,7 @@ export default function App() {
   const [state, setState] = usePersistentState();
   const [page, setPage] = useState<PageId>(() => {
     const screen = new URLSearchParams(window.location.search).get('screen');
-    return screen === 'routine' || screen === 'exercises' || screen === 'progress' || screen === 'history' || screen === 'info' ? screen : 'home';
+    return screen === 'routine' || screen === 'exercises' || screen === 'training' || screen === 'progress' || screen === 'history' || screen === 'info' ? screen : 'home';
   });
   const prefersDark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   const darkMode = state.preferences.theme === 'dark' || (state.preferences.theme === 'system' && prefersDark);
@@ -52,6 +53,7 @@ export default function App() {
       {page === 'home' && <Home state={state} setState={setState} setPage={setPage} />}
       {page === 'routine' && <RoutinePage state={state} setState={setState} />}
       {page === 'exercises' && <ExercisesPage state={state} setState={setState} />}
+      {page === 'training' && <TrainingCenterPage state={state} setState={setState} />}
       {page === 'progress' && <ProgressPage state={state} />}
       {page === 'history' && <MedicalHistoryPage state={state} />}
       {page === 'info' && <InfoPage state={state} setState={setState} />}

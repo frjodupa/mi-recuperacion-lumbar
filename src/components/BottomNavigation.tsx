@@ -1,16 +1,17 @@
-import { Activity, BarChart3, ClipboardList, Home, ListChecks, Settings } from 'lucide-react';
+import { Activity, BarChart3, ClipboardList, Dumbbell, Home, ListChecks, Settings } from 'lucide-react';
 import { ThemeSelector } from './ui';
 import type { AppState } from '../types';
 
 const items = [
   { id: 'home', label: 'Inicio', icon: Home },
-  { id: 'routine', label: 'Mi plan', icon: ListChecks },
-  { id: 'history', label: 'Seguimiento', icon: ClipboardList },
-  { id: 'progress', label: 'Evolución', icon: BarChart3 },
-  { id: 'info', label: 'Perfil', icon: Settings },
-  { id: 'exercises', label: 'Ejercicios', icon: Activity },
+  { id: 'routine', label: 'Rutina', icon: ListChecks },
+  { id: 'exercises', label: 'Biblioteca', icon: Activity },
+  { id: 'training', label: 'Centro', icon: Dumbbell },
+  { id: 'progress', label: 'Progreso', icon: BarChart3 },
+  { id: 'history', label: 'Historial', icon: ClipboardList },
+  { id: 'info', label: 'Ajustes', icon: Settings },
 ] as const;
-const mobileItems = items.filter((item) => item.id !== 'exercises');
+const mobileItems = items;
 
 export type PageId = typeof items[number]['id'];
 
@@ -18,16 +19,16 @@ export function BottomNavigation({ page, setPage, theme, onThemeChange }: { page
   return (
     <>
       <nav className="no-print fixed inset-x-0 bottom-0 z-[1000] border-t border-white/70 bg-white/78 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_50px_rgba(15,92,99,0.08)] backdrop-blur-2xl lg:hidden" aria-label="Navegación principal">
-        <div className="mx-auto grid max-w-xl grid-cols-5 gap-1 rounded-[24px] border border-petrol-100/70 bg-white/50 p-1">
+        <div className="mx-auto flex max-w-2xl gap-1 overflow-x-auto rounded-[24px] border border-petrol-100/70 bg-white/50 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {mobileItems.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setPage(id)} className={`app-nav-button animate-soft flex min-h-14 flex-col items-center justify-center rounded-[20px] text-xs font-semibold transition active:scale-[0.96] ${page === id ? 'bg-petrol-500 text-white shadow-[0_10px_26px_rgba(15,92,99,0.18)]' : 'text-slate-500 hover:bg-white/80 hover:text-petrol-700'}`} aria-current={page === id ? 'page' : undefined}>
+            <button key={id} onClick={() => setPage(id)} className={`app-nav-button animate-soft flex min-h-14 min-w-[4.5rem] flex-col items-center justify-center rounded-[20px] px-2 text-xs font-semibold transition active:scale-[0.96] ${page === id ? 'bg-petrol-500 text-white shadow-[0_10px_26px_rgba(15,92,99,0.18)]' : 'text-slate-500 hover:bg-white/80 hover:text-petrol-700'}`} aria-current={page === id ? 'page' : undefined}>
               <Icon className="size-5" aria-hidden />
               {label}
             </button>
           ))}
         </div>
       </nav>
-      <aside className="no-print order-first hidden w-64 shrink-0 lg:block">
+      <aside className="no-print order-first hidden w-72 shrink-0 lg:block 2xl:w-80">
         <div className="sticky top-5 rounded-[34px] border border-white/70 bg-white/72 p-4 shadow-card backdrop-blur-2xl">
           <div className="mb-5 flex items-center gap-3 rounded-[26px] border border-petrol-100/70 bg-gradient-to-br from-petrol-50/90 to-white/70 p-3 shadow-soft">
             <div className="grid size-14 place-items-center rounded-[22px] bg-petrol-500 text-white shadow-[0_14px_34px_rgba(15,92,99,0.24)]">

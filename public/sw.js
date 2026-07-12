@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mi-recuperacion-lumbar-v12-premium-dashboard';
+const CACHE_NAME = 'mi-recuperacion-lumbar-v13-training-center';
 const CORE_ASSETS = [
   '/',
   '/index.html',

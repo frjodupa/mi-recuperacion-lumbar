@@ -197,6 +197,66 @@ export interface PatientProfile {
   updatedAt: string;
 }
 
+export type TrainingTab = 'recovery' | 'fitness' | 'stretching' | 'cardio' | 'movement-library' | 'favorites' | 'my-routines';
+
+export type TrainingMuscleGroup =
+  | 'Pecho'
+  | 'Espalda'
+  | 'Hombros'
+  | 'Bíceps'
+  | 'Tríceps'
+  | 'Piernas'
+  | 'Glúteos'
+  | 'Core'
+  | 'Movilidad'
+  | 'Recuperación';
+
+export type TrainingEquipment = 'Banco ajustable' | 'Mancuernas' | 'Bandas' | 'Peso corporal' | 'Esterilla' | 'Bicicleta estática' | 'Cinta de correr';
+
+export interface TrainingExerciseImages {
+  main: string;
+  start: string;
+  end: string;
+}
+
+export interface TrainingExercise {
+  id: string;
+  name: string;
+  tab: Exclude<TrainingTab, 'favorites' | 'my-routines'>;
+  muscleGroup: TrainingMuscleGroup;
+  level: Difficulty;
+  equipment: TrainingEquipment[];
+  sets: string;
+  repetitions: string;
+  rest: string;
+  images: TrainingExerciseImages;
+  muscles: string[];
+  description: string;
+  benefits: string[];
+  steps: string[];
+  commonErrors: string[];
+  breathing: string;
+  recommendedWeight: string;
+  progressions: string[];
+  contraindications: string[];
+  rehabPhase: PhaseId;
+  isTherapeutic: boolean;
+}
+
+export interface TrainingRoutine {
+  id: string;
+  name: string;
+  description?: string;
+  exerciseIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrainingCenterState {
+  favorites: string[];
+  routines: TrainingRoutine[];
+}
+
 export interface UserPreferences {
   onboarded: boolean;
   acceptedMedicalNotice: boolean;
@@ -228,6 +288,7 @@ export interface AppState {
   routines: Routine[];
   sessions: Session[];
   checkIns: DailyCheckIn[];
+  trainingCenter: TrainingCenterState;
   patientProfile?: PatientProfile;
   preferences: UserPreferences;
 }

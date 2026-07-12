@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.8 - 2026-07-12
+
+### Added
+- Added the new premium `Centro de Entrenamiento` module with a dedicated menu entry.
+- Added a scalable typed training catalog prepared for fitness, recovery, stretching, cardio, movement library, favorites and user routines.
+- Added training exercise cards with real photo references, muscle group, level, equipment, sets, repetitions, rest, favorite action and professional detail view.
+- Added local favorites and editable personal training routines independent from medical rehabilitation routines.
+
+### Changed
+- Expanded the main app shell to use up to approximately 1800 px and widened the desktop sidebar for large screens.
+- Improved responsive navigation so all modules remain accessible on mobile without compressing the bottom bar.
+- App version bumped to `1.0.8`.
+- Service worker cache version bumped to refresh the installed PWA safely.
+
+### Compatibility
+- Existing LocalStorage is migrated with a default `trainingCenter` state.
+- Existing rehabilitation exercises, routines, sessions and medical history remain intact.
+
 ## 1.0.7 - 2026-07-12
 
 ### Changed
