@@ -1,5 +1,5 @@
-import { CalendarDays, CheckCircle2, Flame, MessageCircle, Play, Search, Target, TimerReset } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { CalendarDays, CheckCircle2, Flame, MessageCircle, Play, Search, Sparkles, Target, TimerReset } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import type { AppState, DailyCheckIn } from '../types';
 import { Button, Card, PainScale, ProgressRing, SafetyNotice } from '../components/ui';
 import type { PageId } from '../components/BottomNavigation';
@@ -8,6 +8,12 @@ const moods = ['Tranquilo', 'Animado', 'Cansado', 'Preocupado', 'Irritable'];
 const quotes = ['La recuperación no consiste en correr, sino en avanzar con seguridad.', 'Cada movimiento controlado cuenta.', 'La constancia vale más que la intensidad.', 'Escucha tu cuerpo y respeta tu proceso.'];
 
 export function Home({ state, setState, setPage }: { state: AppState; setState: React.Dispatch<React.SetStateAction<AppState>>; setPage: (page: PageId) => void }) {
+  const [localTime, setLocalTime] = useState(() => new Date());
+  useEffect(() => {
+    const timer = window.setInterval(() => setLocalTime(new Date()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   const today = new Date().toISOString().slice(0, 10);
   const recommendedRoutine = useMemo(() => getRecommendedRoutine(state), [state]);
   const session = state.sessions.find((item) => item.date === today);
@@ -18,6 +24,7 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   const dailyGoal = Math.max(1, Math.round((recommendedRoutine.exercises.length || 1) * 3));
   const surgeryDays = getDaysSince(state.preferences.surgeryDate);
   const quote = quotes[new Date().getDay() % quotes.length];
+  const timeContent = getTimeContent(localTime.getHours());
 
   const updateCheckIn = (patch: Partial<DailyCheckIn>) => {
     setState((current) => ({ ...current, checkIns: [...current.checkIns.filter((item) => item.date !== today), { ...checkIn, ...patch, recommendedRoutineId: recommendedRoutine.id }] }));
@@ -32,8 +39,12 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
           <div className="min-w-0 space-y-6">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border border-petrol-100 bg-white/70 px-3 py-1 text-sm font-bold text-petrol-700 shadow-sm"><CalendarDays className="size-4" /> Asistente diario</p>
-              <h2 className="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">Buenos días, {state.preferences.patientName || 'José'}.</h2>
+              <h2 className="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">{timeContent.greeting}, {state.preferences.patientName?.trim() || 'José'}.</h2>
               <p className="mt-3 text-lg text-slate-600">{new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}</p>
+              <p className="motivational-message mt-2 flex items-start gap-2 text-sm font-medium leading-relaxed text-slate-500 sm:items-center sm:text-base">
+                <Sparkles className="mt-0.5 size-4 shrink-0 text-aqua sm:mt-0" aria-hidden />
+                <span>{timeContent.message}</span>
+              </p>
             </div>
             <div className="dashboard-kpi-grid">
               <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
@@ -91,6 +102,16 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
       </Card>
     </div>
   );
+}
+
+export function getTimeContent(hour: number) {
+  if (hour >= 5 && hour < 12) {
+    return { greeting: 'Buenos días', message: 'Cada pequeño paso de hoy fortalece tu recuperación.' };
+  }
+  if (hour >= 12 && hour < 20) {
+    return { greeting: 'Buenas tardes', message: 'Tu constancia está construyendo el progreso que buscas.' };
+  }
+  return { greeting: 'Buenas noches', message: 'Descansar también forma parte de tu recuperación.' };
 }
 
 function Metric({ icon: Icon, label, value, tone }: { icon: typeof CalendarDays; label: string; value: string | number; tone: 'aqua' | 'petrol' | 'green' | 'slate' }) {

@@ -182,58 +182,86 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-.theme-dark aside .space-y-1\.5 > button {
+.theme-dark .app-nav-button {
   background: transparent !important;
   color: #b6cdd1 !important;
   box-shadow: none !important;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
 }
 
-.theme-dark aside .space-y-1\.5 > button > span {
+.theme-dark .app-nav-button > span {
   background: transparent !important;
   color: #b6cdd1 !important;
 }
 
-.theme-dark aside .space-y-1\.5 > button:hover {
-  background: rgba(255, 255, 255, 0.10) !important;
+.theme-dark .app-nav-button:hover {
+  background: #153540 !important;
   color: #ffffff !important;
   box-shadow: none !important;
 }
 
-.theme-dark aside .space-y-1\.5 > button:hover > span {
+.theme-dark .app-nav-button:hover > span,
+.theme-dark .app-nav-button:hover > svg {
   background: transparent !important;
   color: #62cfd0 !important;
 }
 
-.theme-dark aside .space-y-1\.5 > button[aria-current="page"] {
-  background: #117d86 !important;
+.theme-dark .app-nav-button[aria-current="page"] {
+  background: #116b73 !important;
   color: #ffffff !important;
-  box-shadow: 0 12px 30px rgba(98, 207, 208, 0.18) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16) !important;
 }
 
-.theme-dark aside .space-y-1\.5 > button[aria-current="page"] > span {
+.theme-dark .app-nav-button[aria-current="page"] > span,
+.theme-dark .app-nav-button[aria-current="page"] > svg {
   background: rgba(255, 255, 255, 0.16) !important;
   color: #ffffff !important;
 }
 
-.theme-dark button.bg-app-primary {
-  background: #f7fafb !important;
+.theme-dark .ui-button-primary {
+  background: #f4f8f8 !important;
   color: #083b41 !important;
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.18) !important;
+  border: 1px solid rgba(98, 207, 208, 0.28);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
 }
 
-.theme-dark button.bg-app-primary svg {
+.theme-dark .ui-button-primary svg {
   color: #62cfd0;
 }
 
-.theme-dark button.bg-app-primary:hover {
-  background: #117d86 !important;
-  color: #ffffff !important;
+.theme-dark .ui-button-primary:hover {
+  background: #eaf1f1 !important;
+  color: #083b41 !important;
   transform: translateY(-1px);
-  box-shadow: 0 16px 38px rgba(98, 207, 208, 0.20) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.14) !important;
 }
 
-.theme-dark button.bg-app-primary:hover svg {
-  color: #ffffff;
+.theme-dark .ui-button-primary:hover svg {
+  color: #25b9bd;
+}
+
+.theme-dark .ui-button-primary:active {
+  transform: translateY(0) scale(1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.theme-dark .ui-button:focus-visible,
+.theme-dark .app-nav-button:focus-visible {
+  outline: 2px solid rgba(98, 207, 208, 0.72);
+  outline-offset: 3px;
+}
+
+.theme-dark .ui-button-primary:disabled {
+  background: #263b43 !important;
+  color: #8da0a5 !important;
+  border-color: rgba(141, 160, 165, 0.18);
+  opacity: 1;
+  transform: none;
+}
+
+.theme-dark .ui-button-primary:disabled svg {
+  color: #789096;
 }
 
 .theme-dark button.bg-app-secondary\/14 {
@@ -261,6 +289,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .theme-dark button.bg-white\/60:hover {
   background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark .ui-button-danger {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 155, 145, 0.24) !important;
+  color: #ffb2aa !important;
+}
+
+.theme-dark .ui-button-danger:hover {
+  background: rgba(255, 155, 145, 0.10) !important;
+}
+
+.theme-dark .motivational-message {
+  color: #a9c5ca !important;
 }
 
 .theme-dark header .bg-white\/72 {

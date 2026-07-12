@@ -13,7 +13,7 @@ export function Button({ children, variant = 'primary', className = '', ...props
     ghost: 'bg-white/60 text-app-primaryDark border border-app-border hover:bg-app-primaryLight active:scale-[0.98]',
     danger: 'bg-white/85 text-app-danger border border-red-100 hover:bg-red-50 active:scale-[0.98]',
   };
-  return <button className={`animate-soft inline-flex items-center justify-center gap-2 rounded-[18px] px-4 py-2.5 font-semibold tracking-[-0.01em] transition disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${className}`} {...props}>{children}</button>;
+  return <button className={`ui-button ui-button-${variant} animate-soft inline-flex items-center justify-center gap-2 rounded-[18px] px-4 py-2.5 font-semibold tracking-[-0.01em] transition disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${className}`} {...props}>{children}</button>;
 }
 
 export function SafetyNotice() {
