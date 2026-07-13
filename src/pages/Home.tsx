@@ -1,12 +1,10 @@
-import { CalendarDays, CheckCircle2, Flame, MessageCircle, Search, Target, TimerReset } from 'lucide-react';
+import { CalendarDays, HeartPulse, Moon, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { AppState, DailyCheckIn } from '../types';
-import { Button, Card, PainScale, SafetyNotice } from '../components/ui';
+import { Button, Card, PainScale } from '../components/ui';
 import type { PageId } from '../components/BottomNavigation';
-import { DashboardHeader, NextActivityCard, RecoveryProgressCard, StatusTodayCard, TodayPlanCard, WeeklySummaryCard } from '../components/dashboard';
 
 const moods = ['Tranquilo', 'Animado', 'Cansado', 'Preocupado', 'Irritable'];
-const quotes = ['La recuperación no consiste en correr, sino en avanzar con seguridad.', 'Cada movimiento controlado cuenta.', 'La constancia vale más que la intensidad.', 'Escucha tu cuerpo y respeta tu proceso.'];
 
 export function Home({ state, setState, setPage }: { state: AppState; setState: React.Dispatch<React.SetStateAction<AppState>>; setPage: (page: PageId) => void }) {
   const [localTime, setLocalTime] = useState(() => new Date());
@@ -20,12 +18,8 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   const session = state.sessions.find((item) => item.date === today);
   const checkIn = state.checkIns.find((item) => item.date === today) || createDefaultCheckIn(today, recommendedRoutine.id);
   const percent = Math.round(((session?.completedExerciseIds.length || 0) / Math.max(1, recommendedRoutine.exercises.length)) * 100);
-  const totalMinutes = state.sessions.reduce((sum, item) => sum + item.durationMinutes, 0);
-  const streak = calculateCurrentStreak(state.sessions);
-  const dailyGoal = state.patientProfile?.dailyGoalMinutes || Math.max(1, Math.round((recommendedRoutine.exercises.length || 1) * 3));
   const surgeryDays = getDaysSince(state.patientProfile?.surgeryDate || state.preferences.surgeryDate);
   const patientName = state.patientProfile?.name || state.preferences.patientName?.trim() || 'José';
-  const quote = quotes[new Date().getDay() % quotes.length];
   const timeContent = getTimeContent(localTime.getHours());
   const formattedToday = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
   const activePhase = state.preferences.activePhase.replace('fase-', 'Fase ');
@@ -35,58 +29,80 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   };
 
   return (
-    <div className="space-y-5">
-      <SafetyNotice />
+    <div className="space-y-4 lg:space-y-6">
+      <Card className="overflow-hidden border-white/70 p-0">
+        <div className="relative p-6 sm:p-8 lg:p-10">
+          <div className="max-w-3xl">
+            <p className="inline-flex items-center gap-2 rounded-full border border-petrol-100/80 bg-white/70 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-petrol-700 shadow-sm">
+              <Sparkles className="size-3.5" /> Hoy
+            </p>
+            <h2 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-petrol-700 sm:text-5xl">
+              {timeContent.greeting}, {patientName}
+            </h2>
+            <p className="mt-3 max-w-2xl text-lg leading-relaxed text-slate-600">{formattedToday}</p>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600">Tu sesión de hoy está lista. Sigue con calma y sin presión.</p>
+          </div>
 
-      <Card className="premium-hero p-6 sm:p-8 lg:p-10">
-        <div className="relative z-10">
-          <DashboardHeader greeting={timeContent.greeting} name={patientName} date={formattedToday} message={timeContent.message} />
-          <div className="dashboard-kpi-grid mt-8">
-            <Metric icon={CalendarDays} label="Días desde la operación" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
-            <Metric icon={TimerReset} label="Tiempo total rehabilitado" value={`${totalMinutes} min`} tone="petrol" />
-            <Metric icon={Flame} label="Racha de días" value={`${streak} d`} tone="green" />
-            <Metric icon={Target} label="Objetivo diario" value={`${dailyGoal} min`} tone="slate" />
+          <div className="mt-8 rounded-[30px] border border-petrol-100/80 bg-white/82 p-5 shadow-[0_16px_50px_rgba(15,92,99,0.08)] backdrop-blur">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Tu sesión de hoy</p>
+                <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-petrol-700">{recommendedRoutine.name}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{recommendedRoutine.exercises.length} ejercicios · {Math.max(1, recommendedRoutine.exercises.length * 3)} minutos aprox.</p>
+              </div>
+              <Button className="w-full sm:w-auto" onClick={() => setPage('routine')}>Tu sesión de hoy</Button>
+            </div>
           </div>
         </div>
       </Card>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <StatusTodayCard checkIn={checkIn} onRegister={() => document.getElementById('daily-check-in')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
-        <RecoveryProgressCard days={surgeryDays} phase={activePhase} percent={percent} />
-        <TodayPlanCard routine={recommendedRoutine} completed={session?.completedExerciseIds.length || 0} onStart={() => setPage('routine')} onExplore={() => setPage('exercises')} />
-        <NextActivityCard routine={recommendedRoutine} exercises={state.exercises} />
+      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <Card className="p-5 sm:p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Resumen de hoy</p>
+              <h3 className="mt-1 text-xl font-semibold text-petrol-700">Lo esencial, sin ruido</h3>
+            </div>
+            <div className="rounded-full bg-petrol-50 px-3 py-1 text-sm font-semibold text-petrol-700">{percent}% listo</div>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <Metric icon={CalendarDays} label="Días desde la cirugía" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
+            <Metric icon={HeartPulse} label="Dolor de hoy" value={`${checkIn.pain}/10`} tone="petrol" />
+            <Metric icon={Moon} label="Sueño" value={`${checkIn.sleepQuality ?? 7}/10`} tone="green" />
+          </div>
+        </Card>
+
+        <Card className="p-5 sm:p-6">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Antes de empezar</p>
+          <h3 className="mt-1 text-xl font-semibold text-petrol-700">Cómo te encuentras</h3>
+          <div className="mt-5 space-y-4">
+            <PainScale label="Dolor" value={checkIn.pain} onChange={(pain) => updateCheckIn({ pain })} />
+            <label className="block font-semibold text-petrol-700">Estado de ánimo
+              <select className="mt-2 min-h-11 w-full rounded-xl border border-petrol-100 bg-white/80 px-3" value={checkIn.mood || 'Tranquilo'} onChange={(event) => updateCheckIn({ mood: event.target.value, feeling: event.target.value })}>
+                {moods.map((mood) => <option key={mood}>{mood}</option>)}
+              </select>
+            </label>
+          </div>
+        </Card>
       </div>
 
-      <WeeklySummaryCard sessions={state.sessions} setPage={setPage} />
-
-      <Card id="daily-check-in" className="p-6 sm:p-7">
-        <h3 className="text-xl font-bold text-petrol-700">Antes de comenzar</h3>
-        <p className="mt-1 text-sm text-slate-600">Estos datos ayudan a contextualizar la sesión y el historial médico.</p>
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
-          <PainScale label="Dolor" value={checkIn.pain} onChange={(pain) => updateCheckIn({ pain })} />
+      <Card id="daily-check-in" className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Registro breve</p>
+            <h3 className="mt-1 text-xl font-semibold text-petrol-700">Un vistazo simple para hoy</h3>
+          </div>
+          <div className="rounded-full border border-petrol-100 bg-petrol-50 px-3 py-1 text-sm font-semibold text-petrol-700">{activePhase}</div>
+        </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
           <Scale label="Rigidez" value={checkIn.stiffness ?? 0} onChange={(stiffness) => updateCheckIn({ stiffness })} />
           <Scale label="Fatiga" value={checkIn.fatigue ?? 0} onChange={(fatigue) => updateCheckIn({ fatigue })} />
-          <Scale label="Calidad del sueño" value={checkIn.sleepQuality ?? 7} onChange={(sleepQuality) => updateCheckIn({ sleepQuality })} />
-          <label className="font-semibold text-petrol-700">Horas de sueño<input className="mt-2 min-h-11 w-full rounded-xl border border-petrol-100 px-3" type="number" min="0" max="14" step="0.5" value={checkIn.sleepHours ?? 7} onChange={(event) => updateCheckIn({ sleepHours: Number(event.target.value) })} /></label>
-          <label className="font-semibold text-petrol-700">Estado de ánimo<select className="mt-2 min-h-11 w-full rounded-xl border border-petrol-100 px-3" value={checkIn.mood || 'Tranquilo'} onChange={(event) => updateCheckIn({ mood: event.target.value, feeling: event.target.value })}>{moods.map((mood) => <option key={mood}>{mood}</option>)}</select></label>
         </div>
-        {checkIn.pain >= 7 && <div className="mt-4 rounded-xl bg-amber-50 p-3 font-semibold text-amber-900">Hoy no deberías realizar la rutina sin consultar previamente con un profesional sanitario.</div>}
-      </Card>
-
-      <Card>
-        <h3 className="text-xl font-bold text-petrol-700">Timeline de hoy</h3>
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
-          <TimelineItem title="Chequeo" body="Dolor, sueño y fatiga registrados antes de empezar." active />
-          <TimelineItem title="Rutina" body={`${recommendedRoutine.exercises.length} ejercicios con control y descanso.`} />
-          <TimelineItem title="Registro" body="Guarda síntomas, observaciones y progreso al terminar." />
-        </div>
-      </Card>
-
-      <LocalAssistant state={state} />
-
-      <Card className="bg-gradient-to-br from-white to-petrol-50">
-        <p className="text-sm font-bold uppercase text-aqua">Recordatorio</p>
-        <p className="mt-2 text-xl font-semibold leading-relaxed text-petrol-700">{quote}</p>
+        {checkIn.pain >= 7 && (
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50/80 p-3 text-sm font-semibold text-amber-900">
+            Hoy conviene pausar la sesión y consultar con un profesional si el dolor aumenta.
+          </div>
+        )}
       </Card>
     </div>
   );
@@ -127,34 +143,6 @@ function Scale({ label, value, onChange }: { label: string; value: number; onCha
   );
 }
 
-function TimelineItem({ title, body, active = false }: { title: string; body: string; active?: boolean }) {
-  return (
-    <div className="relative rounded-[24px] border border-petrol-100 bg-white/58 p-4">
-      <div className={`premium-timeline-dot grid size-10 place-items-center rounded-full ${active ? 'bg-petrol-500 text-white' : 'bg-petrol-50 text-petrol-700'}`}>
-        <CheckCircle2 className="size-5" />
-      </div>
-      <p className="mt-4 font-bold text-petrol-700">{title}</p>
-      <p className="mt-1 text-sm leading-relaxed text-slate-600">{body}</p>
-    </div>
-  );
-}
-
-function LocalAssistant({ state }: { state: AppState }) {
-  const [query, setQuery] = useState('');
-  const answer = getLocalAssistantAnswer(query, state);
-  return (
-    <Card>
-      <h3 className="flex items-center gap-2 text-xl font-bold text-petrol-700"><MessageCircle className="size-5" /> Asistente local</h3>
-      <p className="mt-1 text-sm text-slate-600">Responde sobre uso de la app, ejercicios, rutinas, historial y progreso. No realiza diagnósticos.</p>
-      <label className="mt-3 flex items-center gap-3 rounded-xl border border-petrol-100 bg-white px-4">
-        <Search className="size-5 shrink-0 text-slate-500" />
-        <input className="min-h-12 flex-1 border-0 bg-transparent pl-1 outline-none" placeholder="Buscar ejercicio, rutina o duda de uso" value={query} onChange={(event) => setQuery(event.target.value)} />
-      </label>
-      {query && <div className="mt-3 rounded-xl bg-petrol-50 p-4 text-sm leading-relaxed text-slate-700">{answer}</div>}
-    </Card>
-  );
-}
-
 function createDefaultCheckIn(date: string, routineId: string): DailyCheckIn {
   return { date, feeling: 'Tranquilo', pain: 2, stiffness: 2, fatigue: 3, sleepHours: 7, sleepQuality: 7, mood: 'Tranquilo', recommendedRoutineId: routineId };
 }
@@ -171,25 +159,3 @@ function getDaysSince(date?: string) {
   return Math.max(0, Math.floor((Date.now() - start.getTime()) / 86400000));
 }
 
-function calculateCurrentStreak(sessions: AppState['sessions']) {
-  const dates = new Set(sessions.filter((session) => session.completedExerciseIds.length).map((session) => session.date));
-  let streak = 0;
-  for (let i = 0; i < 60; i++) {
-    const day = new Date();
-    day.setDate(day.getDate() - i);
-    if (dates.has(day.toISOString().slice(0, 10))) streak += 1;
-    else if (i > 0) break;
-  }
-  return streak;
-}
-
-function getLocalAssistantAnswer(query: string, state: AppState) {
-  const normalized = query.toLowerCase();
-  const exercise = state.exercises.find((item) => normalized && item.name.toLowerCase().includes(normalized));
-  if (exercise) return `${exercise.name}: ${exercise.description} Posición: ${exercise.position} Respiración: ${exercise.breathing}`;
-  if (normalized.includes('dolor')) return 'El dolor se registra antes y después de cada sesión para observar tolerancia. Si aparece dolor intenso o síntomas nuevos, detén la sesión y consulta con un profesional.';
-  if (normalized.includes('rutina')) return `Tienes ${state.routines.length} rutinas. La rutina recomendada hoy se elige por día asignado y puede cambiarse desde la pantalla Rutina.`;
-  if (normalized.includes('progreso') || normalized.includes('historial')) return `Hay ${state.sessions.length} sesiones registradas con dolor, fatiga, ejercicios y observaciones. Consulta Progreso o Historial médico para el detalle.`;
-  if (normalized.includes('material') || normalized.includes('banco') || normalized.includes('pesas')) return 'El material disponible se configura en Ajustes. La biblioteca filtra banco, mancuernas y bandas según esa configuración.';
-  return 'Puedo ayudarte a encontrar ejercicios, explicar rutinas, interpretar el historial de la app y localizar opciones. No sustituyo a un profesional sanitario ni doy diagnósticos.';
-}

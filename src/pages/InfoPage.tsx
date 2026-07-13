@@ -1,9 +1,10 @@
-import { AlertTriangle, Database, FileText, RotateCcw, Upload } from 'lucide-react';
+import { AlertTriangle, Database, FileText, RotateCcw, Upload, Info } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { phases } from '../data/initialData';
 import { rehabModules } from '../modules/rehabModules';
 import { clearState, exportState, getLatestBackup, parseImportedState } from '../utils/storage';
 import { Button, Card, ConfirmDialog, SafetyNotice } from '../components/ui';
+import type { PageId } from '../components/BottomNavigation';
 import type { AppState, EquipmentKey, PhaseId } from '../types';
 
 const sections = [
@@ -18,7 +19,7 @@ const sections = [
   ['Aviso sanitario', 'Esta aplicación organiza información personal y no sustituye el seguimiento de un traumatólogo, rehabilitador o fisioterapeuta.'],
 ];
 
-export function InfoPage({ state, setState }: { state: AppState; setState: React.Dispatch<React.SetStateAction<AppState>> }) {
+export function InfoPage({ state, setState, setPage }: { state: AppState; setState: React.Dispatch<React.SetStateAction<AppState>>; setPage: (page: PageId) => void }) {
   const [confirmReset, setConfirmReset] = useState(false);
   const [phaseConfirm, setPhaseConfirm] = useState<PhaseId | null>(null);
   const [importError, setImportError] = useState('');
@@ -84,6 +85,23 @@ export function InfoPage({ state, setState }: { state: AppState; setState: React
     <div className="space-y-5">
       <div><h2 className="text-3xl font-bold text-petrol-700">Ajustes</h2><p className="text-slate-600">Preguntas frecuentes, seguridad, privacidad, fases y configuración.</p></div>
       <Card className="p-5 sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-aqua">Información</p>
+            <h3 className="mt-1 text-2xl font-bold tracking-[-0.03em] text-petrol-700">Acerca de la aplicación</h3>
+            <p className="mt-1 text-sm text-slate-600">Conoce la historia, el creador, el propósito y los recursos de esta herramienta.</p>
+          </div>
+          <button
+            type="button"
+            className="animate-soft inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-2xl border border-petrol-100 bg-petrol-500 px-5 font-bold text-white shadow-sm hover:-translate-y-0.5 hover:bg-petrol-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aqua"
+            onClick={() => setPage('about')}
+          >
+            <Info className="size-4" />
+            Ver Acerca de
+          </button>
+        </div>
+      </Card>
+      <Card className="p-5 sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-aqua">Ayuda rápida</p>
@@ -115,7 +133,7 @@ export function InfoPage({ state, setState }: { state: AppState; setState: React
         )}
       </Card>
       <SafetyNotice />
-      <Card className="border-amber-200 bg-amber-50"><h3 className="flex items-center gap-2 text-xl font-bold text-amber-900"><AlertTriangle className="size-5" /> Detén el ejercicio y consulta con un profesional si aparece alguno de estos síntomas:</h3><ul className="mt-3 grid gap-1 text-sm font-semibold text-amber-900 sm:grid-cols-2"><li>Dolor intenso o repentino.</li><li>Dolor que aumenta claramente con el ejercicio.</li><li>Pérdida de fuerza.</li><li>Hormigueo o adormecimiento progresivo.</li><li>Alteraciones del control de esfínteres.</li><li>Fiebre.</li><li>Problemas en la cicatriz.</li><li>Mareo o dificultad respiratoria.</li><li>Síntomas nuevos en las piernas.</li></ul></Card>
+      <Card className="warning-card p-5 sm:p-6"><h3 className="warning-title flex items-center gap-2 text-xl font-bold"><AlertTriangle className="warning-icon size-5" /> Detén el ejercicio y consulta con un profesional si aparece alguno de estos síntomas:</h3><ul className="warning-list mt-4 grid gap-2 text-sm font-medium sm:grid-cols-2"><li><span className="warning-keyword">Dolor intenso</span> o repentino.</li><li>Dolor que aumenta claramente con el ejercicio.</li><li><span className="warning-keyword">Pérdida de fuerza</span>.</li><li>Hormigueo o adormecimiento progresivo.</li><li><span className="warning-keyword">Alteraciones del control de esfínteres</span>.</li><li><span className="warning-keyword">Fiebre</span>.</li><li>Problemas en la cicatriz.</li><li><span className="warning-keyword">Dificultad respiratoria</span>.</li><li>Síntomas nuevos en las piernas.</li></ul></Card>
       <Card><h3 className="text-xl font-bold text-petrol-700">Configuración por fases</h3><p className="mt-1 text-sm font-semibold text-amber-800">El cambio de fase debe confirmarlo tu médico o fisioterapeuta.</p><div className="mt-3 grid gap-3 sm:grid-cols-3">{phases.map((phase) => <button key={phase.id} onClick={() => setPhaseConfirm(phase.id)} className={`rounded-xl border p-4 text-left ${state.preferences.activePhase === phase.id ? 'border-petrol-500 bg-petrol-50' : 'border-petrol-100 bg-white'}`}><span className="font-bold text-petrol-700">{phase.name}</span><span className="mt-1 block text-sm text-slate-600">{phase.description}</span><span className="mt-3 block rounded-lg bg-white px-3 py-2 text-center text-sm font-bold text-petrol-700">Cambiar de fase</span></button>)}</div></Card>
       <Card>
         <h3 className="text-xl font-bold text-petrol-700">Mi equipamiento</h3>

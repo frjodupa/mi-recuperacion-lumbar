@@ -11,7 +11,17 @@ type SessionItem = RoutineExercise & { exercise?: Exercise };
 export function RoutinePage({ state, setState }: { state: AppState; setState: React.Dispatch<React.SetStateAction<AppState>> }) {
   const [routineId, setRoutineId] = useState(state.routines[0]?.id || '');
   const routine = state.routines.find((item) => item.id === routineId) || state.routines[0];
-  const items = useMemo(() => routine.exercises.slice().sort((a, b) => a.order - b.order).map((item) => ({ ...item, exercise: state.exercises.find((exercise) => exercise.id === item.exerciseId) })), [routine, state.exercises]);
+  const exercisesById = useMemo(
+    () => new Map(state.exercises.map((exercise) => [exercise.id, exercise])),
+    [state.exercises],
+  );
+  const items = useMemo(
+    () => routine.exercises
+      .slice()
+      .sort((a, b) => a.order - b.order)
+      .map((item) => ({ ...item, exercise: exercisesById.get(item.exerciseId) })),
+    [exercisesById, routine],
+  );
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeSet, setActiveSet] = useState(1);
   const [mode, setMode] = useState<TimerMode>('ready');
@@ -234,78 +244,81 @@ export function RoutinePage({ state, setState }: { state: AppState; setState: Re
   const lastWeight = activeExercise ? findLastWeight(state, activeExercise.id) : undefined;
 
   return (
-    <div className="space-y-5">
-      <div className="sticky-progress no-print rounded-2xl border border-app-border bg-app-surface/90 p-3 shadow-soft">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4 lg:space-y-5">
+      <div className="no-print rounded-[28px] border border-white/70 bg-white/78 p-3 shadow-card backdrop-blur-xl">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-calmgreen">Progreso de sesión</p>
-            <p className="text-sm font-semibold text-app-primaryDark">{percent}% completado · tiempo restante estimado {formatSeconds(remainingSeconds)}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Progreso de sesión</p>
+            <p className="mt-1 text-sm font-semibold text-petrol-700">{percent}% completado · {formatSeconds(remainingSeconds)} restantes</p>
           </div>
-          <div className="h-3 overflow-hidden rounded-full bg-petrol-50 sm:w-72" aria-label={`${percent}% completado`}>
+          <div className="h-2.5 overflow-hidden rounded-full bg-petrol-50 sm:w-72" aria-label={`${percent}% completado`}>
             <div className="h-full rounded-full bg-calmgreen transition-all duration-300" style={{ width: `${percent}%` }} />
           </div>
         </div>
       </div>
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-petrol-700">Rutina</h2>
-          <p className="text-slate-600">Ejercicios programados para realizar hoy. La biblioteca contiene todos los ejercicios disponibles.</p>
+          <h2 className="text-3xl font-semibold tracking-[-0.03em] text-petrol-700">Sesión</h2>
+          <p className="text-sm text-slate-600">Una sola rutina clara para hoy.</p>
         </div>
-        <select className="min-h-11 rounded-xl border border-petrol-100 bg-white px-3 font-semibold text-petrol-700" value={routine.id} onChange={(event) => setRoutineId(event.target.value)}>{state.routines.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
+        <select className="min-h-11 rounded-xl border border-petrol-100 bg-white/80 px-3 font-semibold text-petrol-700" value={routine.id} onChange={(event) => setRoutineId(event.target.value)}>{state.routines.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
       </div>
 
-      <Card className="exercise-transition">
-        <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
-          <div className="space-y-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <Card className="overflow-hidden p-0">
+        <div className="grid gap-0 xl:grid-cols-[1.15fr_0.85fr]">
+          <div className="space-y-4 p-5 sm:p-6 lg:p-7">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-sm font-bold uppercase tracking-wide text-calmgreen">{routine.name}</p>
-                <h3 className="mt-1 text-2xl font-bold text-petrol-700">{activeExercise?.name || 'Sin ejercicios en esta rutina'}</h3>
-                <p className="mt-1 text-sm text-slate-600">{activeExercise ? `Ejercicio ${activeIndex + 1} de ${items.length} · ${activeExercise.category} · serie ${activeSet}/${totalSets}` : 'Añade ejercicios desde la Biblioteca de ejercicios.'}</p>
-                <p className="mt-2 text-sm font-semibold text-app-primaryDark">Siguiente: {nextExercise?.name || 'finalizar registro de sesión'}</p>
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">{routine.name}</p>
+                <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-petrol-700">{activeExercise?.name || 'Sin ejercicios en esta rutina'}</h3>
+                <p className="mt-2 text-sm text-slate-600">{activeExercise ? `Ejercicio ${activeIndex + 1} de ${items.length} · ${activeExercise.category} · ${formatSets(getSets(activeItem))}` : 'Añade ejercicios desde la Biblioteca.'}</p>
               </div>
               <ProgressRing percent={percent} />
             </div>
-            <div className="grid gap-3 md:grid-cols-[220px_1fr]">
-              {activeExercise?.photoUrl && <img className="h-48 w-full rounded-xl object-cover" src={activeExercise.photoUrl} alt={`Foto de ${activeExercise.name}`} />}
-              <div className="rounded-xl bg-petrol-50 p-4">
-                <div className="flex items-center gap-2 text-petrol-700"><Clock className="size-5" /><span className="font-bold">{modeLabel(mode)}</span></div>
-                <p className="mt-3 text-5xl font-bold tabular-nums text-petrol-700">{formatSeconds(secondsLeft || workSeconds)}</p>
-                <p className="mt-2 text-sm text-slate-600">Trabajo {workSeconds}s · descanso {restSeconds}s · cambio automático entre series.</p>
-                <p className="mt-1 text-sm font-semibold text-app-primaryDark">Restante de sesión: {formatSeconds(remainingSeconds)} · series restantes {Math.max(0, totalSets - activeSet + 1)}</p>
-                {activeExercise?.progressionNotes && <p className="mt-3 rounded-lg bg-white p-3 text-sm font-semibold text-slate-700">{activeExercise.progressionNotes}</p>}
+
+            <div className="grid gap-3 lg:grid-cols-[220px_1fr]">
+              {activeExercise?.photoUrl && <img className="h-48 w-full rounded-[24px] object-cover" src={activeExercise.photoUrl} alt={`Foto de ${activeExercise.name}`} />}
+              <div className="rounded-[24px] bg-petrol-50 p-4 sm:p-5">
+                <div className="flex items-center gap-2 text-petrol-700"><Clock className="size-5" /><span className="font-semibold">{modeLabel(mode)}</span></div>
+                <p className="mt-3 text-5xl font-semibold tabular-nums tracking-[-0.04em] text-petrol-700">{formatSeconds(secondsLeft || workSeconds)}</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">Trabajo {workSeconds}s · descanso {restSeconds}s.</p>
+                <p className="mt-1 text-sm font-semibold text-petrol-700">Siguiente: {nextExercise?.name || 'registro final'}</p>
+                {activeExercise?.progressionNotes && <p className="mt-3 rounded-[18px] bg-white/80 p-3 text-sm font-semibold text-slate-700">{activeExercise.progressionNotes}</p>}
               </div>
             </div>
+
             {activeExercise?.weightMode && activeExercise.weightMode !== 'none' && (
-              <div className="rounded-xl border border-petrol-100 bg-white p-4">
-                <div className="flex items-center gap-2 font-bold text-petrol-700"><Dumbbell className="size-5" /> Peso de esta sesión</div>
+              <div className="rounded-[24px] border border-petrol-100 bg-white/80 p-4">
+                <div className="flex items-center gap-2 font-semibold text-petrol-700"><Dumbbell className="size-5" /> Peso de esta sesión</div>
                 <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
                   <label className="text-sm font-semibold text-slate-700">Kg {activeExercise.weightMode === 'per-hand' ? 'por mano' : 'totales'}<input className="mt-1 min-h-11 w-full rounded-xl border border-petrol-100 px-3" type="number" min="0" step="0.5" value={weightLogs[activeExercise.id] ?? 0} onChange={(event) => setWeightLogs({ ...weightLogs, [activeExercise.id]: Number(event.target.value) })} /></label>
-                  <Button variant="secondary" disabled={lastWeight === undefined} onClick={() => setWeightLogs({ ...weightLogs, [activeExercise.id]: lastWeight || 0 })}>Usar último peso</Button>
+                  <Button variant="secondary" disabled={lastWeight === undefined} onClick={() => setWeightLogs({ ...weightLogs, [activeExercise.id]: lastWeight || 0 })}>Usar último</Button>
                 </div>
-                <p className="mt-2 text-xs text-slate-500">Último peso registrado: {lastWeight !== undefined ? `${lastWeight} kg` : 'sin registros previos'}. La app no sube el peso automáticamente.</p>
+                <p className="mt-2 text-xs text-slate-500">Último peso registrado: {lastWeight !== undefined ? `${lastWeight} kg` : 'sin registros previos'}.</p>
               </div>
             )}
           </div>
-          <div className="rounded-xl border border-petrol-100 p-4">
-            <h3 className="font-bold text-petrol-700">Control de sesión</h3>
-            <div className="mt-3 grid gap-2">
-              <Button onClick={start} disabled={!activeExercise || mode === 'prep' || mode === 'work' || mode === 'rest'}><Play className="size-5" /> Comenzar rutina automática</Button>
+
+          <div className="border-t border-petrol-100/80 bg-petrol-50/60 p-5 sm:p-6 xl:border-l xl:border-t-0">
+            <h3 className="text-lg font-semibold text-petrol-700">Control</h3>
+            <div className="mt-4 grid gap-2">
+              <Button onClick={start} disabled={!activeExercise || mode === 'prep' || mode === 'work' || mode === 'rest'}><Play className="size-5" /> Iniciar</Button>
               <Button variant="ghost" onClick={pause} disabled={mode !== 'prep' && mode !== 'work' && mode !== 'rest'}><Pause className="size-5" /> Pausar</Button>
               <Button variant="secondary" onClick={resume} disabled={mode !== 'paused'}><TimerReset className="size-5" /> Continuar</Button>
               <Button variant="ghost" onClick={toggleFullscreen}><Maximize2 className="size-5" /> Pantalla completa</Button>
               <Button variant="ghost" onClick={() => setState((current) => ({ ...current, preferences: { ...current.preferences, relaxingSoundEnabled: !current.preferences.relaxingSoundEnabled } }))}><Volume2 className="size-5" /> Sonido relajante</Button>
-              <Button variant="danger" onClick={stopSession}><ShieldAlert className="size-5" /> Detener sesión</Button>
-              <Button variant="ghost" onClick={() => setFinishOpen(true)}><Square className="size-5" /> Finalizar sesión</Button>
+              <Button variant="danger" onClick={stopSession}><ShieldAlert className="size-5" /> Detener</Button>
+              <Button variant="ghost" onClick={() => setFinishOpen(true)}><Square className="size-5" /> Finalizar</Button>
             </div>
-            <p className="mt-3 text-sm text-slate-600">{completed.length}/{items.length} ejercicios completados · {percent}%</p>
+            <p className="mt-4 text-sm text-slate-600">{completed.length}/{items.length} ejercicios completados · {percent}%</p>
           </div>
         </div>
       </Card>
 
       <div className="space-y-3">
         {items.map((item, index) => item.exercise && (
-          <Card key={item.exerciseId} className={`${completed.includes(item.exerciseId) ? 'border-calmgreen bg-green-50' : ''} ${index === activeIndex ? 'ring-2 ring-aqua' : ''}`}>
+          <Card key={item.exerciseId} className={`${completed.includes(item.exerciseId) ? 'border-calmgreen bg-green-50/70' : ''} ${index === activeIndex ? 'ring-2 ring-aqua' : ''}`}>
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex gap-3">
                 <button aria-label={`Marcar ${item.exercise.name}`} onClick={() => toggleComplete(item)} className={`grid size-12 shrink-0 place-items-center rounded-xl border-2 ${completed.includes(item.exerciseId) ? 'border-calmgreen bg-calmgreen text-white' : 'border-petrol-100 bg-white text-petrol-700'}`}>{completed.includes(item.exerciseId) ? <Check /> : index + 1}</button>
@@ -313,13 +326,13 @@ export function RoutinePage({ state, setState }: { state: AppState; setState: Re
                 <div>
                   <h3 className="font-bold text-petrol-700">{item.exercise.name}</h3>
                   <p className="text-sm text-slate-600">{item.exercise.category} · {formatSets(getSets(item))} · {item.repetitions || item.exercise.repetitions || item.duration || item.exercise.duration} · descanso {item.rest || item.exercise.rest}</p>
-                  <p className="text-sm font-semibold text-calmgreen">{completed.includes(item.exerciseId) ? 'Completado y registrado' : index === activeIndex ? 'Ejercicio activo' : 'Pendiente'}</p>
+                  <p className="text-sm font-semibold text-calmgreen">{completed.includes(item.exerciseId) ? 'Completado' : index === activeIndex ? 'Activo' : 'Pendiente'}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button variant="ghost" onClick={() => move(index, -1)} aria-label="Subir ejercicio"><ChevronUp className="size-5" /></Button>
                 <Button variant="ghost" onClick={() => move(index, 1)} aria-label="Bajar ejercicio"><ChevronDown className="size-5" /></Button>
-                <Button variant="secondary" onClick={() => setOpenedExercise(item.exercise!)}>Abrir ejercicio</Button>
+                <Button variant="secondary" onClick={() => setOpenedExercise(item.exercise!)}>Abrir</Button>
               </div>
             </div>
           </Card>

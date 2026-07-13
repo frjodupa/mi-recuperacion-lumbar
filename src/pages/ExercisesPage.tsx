@@ -50,7 +50,10 @@ export function ExercisesPage({ state, setState }: { state: AppState; setState: 
   const [exerciseToAdd, setExerciseToAdd] = useState<Exercise | null>(null);
   const [exerciseToDelete, setExerciseToDelete] = useState<Exercise | null>(null);
   const [routineMessage, setRoutineMessage] = useState('');
-  const routineExerciseIds = new Set(state.routines.flatMap((routine) => routine.exercises.map((item) => item.exerciseId)));
+  const routineExerciseIds = useMemo(
+    () => new Set(state.routines.flatMap((routine) => routine.exercises.map((item) => item.exerciseId))),
+    [state.routines],
+  );
   const isEquipmentAvailable = (exercise: Exercise) => !exercise.equipment?.some((key) => !state.preferences.equipment[key]);
   const availableCount = state.exercises.filter((exercise) => exercise.enabled && isEquipmentAvailable(exercise)).length;
   const hiddenCount = state.exercises.length - availableCount;

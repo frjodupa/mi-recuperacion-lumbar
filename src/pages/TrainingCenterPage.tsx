@@ -26,7 +26,10 @@ export function TrainingCenterPage({ state, setState }: { state: AppState; setSt
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<TrainingExercise | null>(null);
   const [draft, setDraft] = useState<RoutineDraft>({ name: '', exerciseIds: [] });
-  const favorites = new Set(state.trainingCenter.favorites);
+  const favorites = useMemo(
+    () => new Set(state.trainingCenter.favorites),
+    [state.trainingCenter.favorites],
+  );
   const normalizedQuery = query.trim().toLowerCase();
   const availableEquipment = Object.entries(state.preferences.equipment).filter(([, enabled]) => enabled).length;
   const favoriteExercises = trainingCatalog.filter((exercise) => favorites.has(exercise.id));
