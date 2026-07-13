@@ -1,7 +1,7 @@
 import { CalendarDays, HeartPulse, Moon, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { AppState, DailyCheckIn } from '../types';
-import { Button, Card, PainScale } from '../components/ui';
+import { Button, Card, PainScale, ResponsibilityNotice } from '../components/ui';
 import type { PageId } from '../components/BottomNavigation';
 
 const moods = ['Tranquilo', 'Animado', 'Cansado', 'Preocupado', 'Irritable'];
@@ -23,6 +23,12 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
   const timeContent = getTimeContent(localTime.getHours());
   const formattedToday = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
   const activePhase = state.preferences.activePhase.replace('fase-', 'Fase ');
+  const nextAppointment = useMemo(
+    () => [...state.medicalAppointments]
+      .sort((a, b) => Date.parse(`${a.date}T${a.time || '00:00'}`) - Date.parse(`${b.date}T${b.time || '00:00'}`))
+      .find((item) => Date.parse(`${item.date}T${item.time || '00:00'}`) >= Date.now()) || null,
+    [state.medicalAppointments],
+  );
 
   const updateCheckIn = (patch: Partial<DailyCheckIn>) => {
     setState((current) => ({ ...current, checkIns: [...current.checkIns.filter((item) => item.date !== today), { ...checkIn, ...patch, recommendedRoutineId: recommendedRoutine.id }] }));
@@ -56,53 +62,66 @@ export function Home({ state, setState, setPage }: { state: AppState; setState: 
         </div>
       </Card>
 
-      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <Card className="p-5 sm:p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Resumen de hoy</p>
-              <h3 className="mt-1 text-xl font-semibold text-petrol-700">Lo esencial, sin ruido</h3>
-            </div>
-            <div className="rounded-full bg-petrol-50 px-3 py-1 text-sm font-semibold text-petrol-700">{percent}% listo</div>
-          </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <Metric icon={CalendarDays} label="Días desde la cirugía" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
-            <Metric icon={HeartPulse} label="Dolor de hoy" value={`${checkIn.pain}/10`} tone="petrol" />
-            <Metric icon={Moon} label="Sueño" value={`${checkIn.sleepQuality ?? 7}/10`} tone="green" />
-          </div>
-        </Card>
-
-        <Card className="p-5 sm:p-6">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Antes de empezar</p>
-          <h3 className="mt-1 text-xl font-semibold text-petrol-700">Cómo te encuentras</h3>
-          <div className="mt-5 space-y-4">
-            <PainScale label="Dolor" value={checkIn.pain} onChange={(pain) => updateCheckIn({ pain })} />
-            <label className="block font-semibold text-petrol-700">Estado de ánimo
-              <select className="mt-2 min-h-11 w-full rounded-xl border border-petrol-100 bg-white/80 px-3" value={checkIn.mood || 'Tranquilo'} onChange={(event) => updateCheckIn({ mood: event.target.value, feeling: event.target.value })}>
-                {moods.map((mood) => <option key={mood}>{mood}</option>)}
-              </select>
-            </label>
-          </div>
-        </Card>
-      </div>
-
-      <Card id="daily-check-in" className="p-5 sm:p-6">
+      <Card id="daily-check-in" className="p-5 sm:p-6 lg:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Registro breve</p>
-            <h3 className="mt-1 text-xl font-semibold text-petrol-700">Un vistazo simple para hoy</h3>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-aqua">Panel de hoy</p>
+            <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-petrol-700">Tu estado actual</h3>
           </div>
           <div className="rounded-full border border-petrol-100 bg-petrol-50 px-3 py-1 text-sm font-semibold text-petrol-700">{activePhase}</div>
         </div>
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
-          <Scale label="Rigidez" value={checkIn.stiffness ?? 0} onChange={(stiffness) => updateCheckIn({ stiffness })} />
-          <Scale label="Fatiga" value={checkIn.fatigue ?? 0} onChange={(fatigue) => updateCheckIn({ fatigue })} />
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <Metric icon={CalendarDays} label="Días desde la cirugía" value={surgeryDays === null ? 'Configurar' : surgeryDays} tone="aqua" />
+          <Metric icon={HeartPulse} label="Dolor de hoy" value={`${checkIn.pain}/10`} tone="petrol" />
+          <Metric icon={Moon} label="Sueño" value={`${checkIn.sleepQuality ?? 7}/10`} tone="green" />
         </div>
+
+        {nextAppointment && (
+          <div className="mt-5 rounded-2xl border border-petrol-100 bg-petrol-50/70 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Proxima cita</p>
+            <p className="mt-1 text-lg font-semibold text-petrol-700">{nextAppointment.specialty}</p>
+            <p className="mt-1 text-sm text-slate-600">
+              {new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${nextAppointment.date}T12:00:00`))}
+              {' · '}
+              {nextAppointment.time}
+              {' · '}
+              {nextAppointment.medicalCenter || 'Centro no indicado'}
+            </p>
+            <Button variant="secondary" className="mt-3" onClick={() => setPage('profile')}>Ver detalles</Button>
+          </div>
+        )}
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-[24px] border border-petrol-100 bg-white/70 p-4 sm:p-5">
+            <p className="text-sm font-semibold text-petrol-700">Antes de empezar</p>
+            <div className="mt-4 space-y-4">
+              <PainScale label="Dolor" value={checkIn.pain} onChange={(pain) => updateCheckIn({ pain })} />
+              <PainScale label="Sueño" value={checkIn.sleepQuality ?? 7} onChange={(sleepQuality) => updateCheckIn({ sleepQuality })} />
+              <label className="block font-semibold text-petrol-700">Estado de ánimo
+                <select className="mt-2 min-h-11 w-full rounded-xl border border-petrol-100 bg-white/80 px-3" value={checkIn.mood || 'Tranquilo'} onChange={(event) => updateCheckIn({ mood: event.target.value, feeling: event.target.value })}>
+                  {moods.map((mood) => <option key={mood}>{mood}</option>)}
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-petrol-100 bg-white/70 p-4 sm:p-5">
+            <p className="text-sm font-semibold text-petrol-700">Registro breve</p>
+            <div className="mt-4 grid gap-4">
+              <Scale label="Rigidez" value={checkIn.stiffness ?? 0} onChange={(stiffness) => updateCheckIn({ stiffness })} />
+              <Scale label="Fatiga" value={checkIn.fatigue ?? 0} onChange={(fatigue) => updateCheckIn({ fatigue })} />
+            </div>
+          </div>
+        </div>
+
         {checkIn.pain >= 7 && (
-          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50/80 p-3 text-sm font-semibold text-amber-900">
+          <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50/80 p-3 text-sm font-semibold text-amber-900">
             Hoy conviene pausar la sesión y consultar con un profesional si el dolor aumenta.
           </div>
         )}
+
+        <ResponsibilityNotice withEscalation className="mt-5" />
       </Card>
     </div>
   );

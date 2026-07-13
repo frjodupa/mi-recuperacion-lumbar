@@ -1,5 +1,7 @@
-import { ArrowLeft, ExternalLink, HeartHandshake, MessageSquareText, Share2, Sparkles, ShieldCheck, UserRound } from 'lucide-react';
-import { Button, Card } from '../components/ui';
+import { ArrowLeft, ExternalLink, HeartHandshake, MessageSquareText, RotateCcw, Sparkles, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+import { clearState } from '../utils/storage';
+import { Button, Card, ConfirmDialog } from '../components/ui';
 import type { PageId } from '../components/BottomNavigation';
 
 const developmentItems: Array<{ label: string; value: string; href?: string }> = [
@@ -13,6 +15,8 @@ const developmentItems: Array<{ label: string; value: string; href?: string }> =
 const acknowledgements = ['Traumatólogos', 'Neurocirujanos', 'Fisioterapeutas', 'Rehabilitadores', 'Personal de enfermería', 'Investigadores'];
 
 export function AboutPage({ setPage }: { setPage: (page: PageId) => void }) {
+  const [confirmReset, setConfirmReset] = useState(false);
+
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -20,9 +24,9 @@ export function AboutPage({ setPage }: { setPage: (page: PageId) => void }) {
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Acerca de</p>
           <h2 className="mt-1 text-3xl font-bold tracking-[-0.03em] text-[var(--color-title)]">Mi Recuperación Lumbar</h2>
         </div>
-        <Button variant="ghost" onClick={() => setPage('info')}>
+        <Button variant="ghost" onClick={() => setPage('profile')}>
           <ArrowLeft className="size-4" />
-          Volver a Ajustes
+          Volver a Mi perfil
         </Button>
       </div>
 
@@ -48,61 +52,70 @@ export function AboutPage({ setPage }: { setPage: (page: PageId) => void }) {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:min-w-[220px]">
-              <button type="button" className="animate-soft inline-flex items-center justify-center gap-2 rounded-[20px] border border-petrol-100 bg-white/80 px-4 py-3 text-sm font-semibold text-petrol-700 transition hover:-translate-y-0.5 hover:bg-petrol-50" onClick={() => undefined}>
-                <Share2 className="size-4" />
-                Compartir la aplicación
-              </button>
-              <button type="button" className="animate-soft inline-flex items-center justify-center gap-2 rounded-[20px] border border-petrol-100 bg-white/80 px-4 py-3 text-sm font-semibold text-petrol-700 transition hover:-translate-y-0.5 hover:bg-petrol-50" onClick={() => undefined}>
+              <a href="mailto:info@redcrea24.es?subject=Sugerencias%20Mi%20Recuperaci%C3%B3n%20Lumbar" className="animate-soft inline-flex items-center justify-center gap-2 rounded-[20px] border border-petrol-100 bg-white/80 px-4 py-3 text-sm font-semibold text-petrol-700 transition hover:-translate-y-0.5 hover:bg-petrol-50">
                 <MessageSquareText className="size-4" />
                 Enviar sugerencias
-              </button>
+              </a>
+              <a href="mailto:info@redcrea24.es" className="animate-soft inline-flex items-center justify-center gap-2 rounded-[20px] border border-petrol-100 bg-white/80 px-4 py-3 text-sm font-semibold text-petrol-700 transition hover:-translate-y-0.5 hover:bg-petrol-50">
+                Contactar
+              </a>
             </div>
           </div>
         </div>
       </Card>
 
-      <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-        <Card className="p-6 sm:p-7">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Nuestra historia</p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[var(--color-title)]">Nuestra historia</h3>
-          <p className="mt-4 text-base leading-relaxed text-[var(--color-text-secondary)]">
-            Mi Recuperación Lumbar nació de una experiencia real.
-          </p>
-          <p className="mt-3 text-base leading-relaxed text-slate-600">
-            Después de someterme a una artrodesis lumbar viví en primera persona muchas de las dudas, incertidumbres y desafíos que acompañan este proceso: comprender informes médicos, saber qué ejercicios eran adecuados, registrar la evolución y mantener la motivación durante meses de rehabilitación.
-          </p>
-          <p className="mt-3 text-base leading-relaxed text-slate-600">
-            Fue entonces cuando surgió una pregunta:
-          </p>
-          <blockquote className="mt-4 rounded-[24px] border border-petrol-100 bg-petrol-50/70 px-4 py-4 text-lg font-semibold leading-relaxed text-[var(--color-title)]">
-            “¿Y si existiera una aplicación capaz de acompañar al paciente durante toda su recuperación, explicándole cada paso de forma sencilla y adaptándose a su situación?”
-          </blockquote>
-          <p className="mt-4 text-base leading-relaxed text-slate-600">
-            Así nació Mi Recuperación Lumbar. Cada función de esta aplicación está inspirada en necesidades reales vividas durante mi propia recuperación y continúa evolucionando con un único objetivo: ayudar a otras personas a sentirse acompañadas, informadas y seguras durante uno de los momentos más importantes de su vida.
-          </p>
-        </Card>
+      <Card className="p-6 sm:p-7">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Origen y propósito</p>
+        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[var(--color-title)]">Cómo nació Mi Recuperación Lumbar</h3>
+        <p className="mt-4 text-base leading-relaxed text-[var(--color-text-secondary)]">
+          Mi Recuperación Lumbar nació de una experiencia real.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-slate-600">
+          Después de someterme a una artrodesis lumbar viví en primera persona muchas de las dudas, incertidumbres y desafíos que acompañan este proceso: comprender informes médicos, saber qué ejercicios eran adecuados, registrar la evolución y mantener la motivación durante meses de rehabilitación.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-slate-600">
+          Fue entonces cuando surgió una pregunta:
+        </p>
+        <blockquote className="mt-4 rounded-[24px] border border-petrol-100 bg-petrol-50/70 px-4 py-4 text-lg font-semibold leading-relaxed text-[var(--color-title)]">
+          “¿Y si existiera una aplicación capaz de acompañar al paciente durante toda su recuperación, explicándole cada paso de forma sencilla y adaptándose a su situación?”
+        </blockquote>
+        <p className="mt-4 text-base leading-relaxed text-slate-600">
+          Así nació Mi Recuperación Lumbar. El objetivo de la aplicación es ayudar a organizar la recuperación de forma clara, práctica y humana, sin sustituir nunca el criterio de profesionales sanitarios.
+        </p>
+      </Card>
 
-        <Card className="p-6 sm:p-7">
-          <div className="rounded-[24px] border border-petrol-100 bg-white/80 p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="grid size-16 shrink-0 place-items-center rounded-[22px] bg-petrol-500 text-lg font-semibold text-white shadow-[0_14px_30px_rgba(15,92,99,0.2)]">
-                JD
-              </div>
-              <div>
-                <p className="text-lg font-semibold text-[var(--color-title)]">José Duque</p>
-                <p className="text-sm text-[var(--color-text-secondary)]">Creador del proyecto</p>
-              </div>
-            </div>
-            <div className="mt-4 rounded-[20px] border border-dashed border-petrol-200 bg-petrol-50/70 p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-              <div className="mb-3 flex items-center gap-2 text-[var(--color-title)]">
-                <UserRound className="size-4" />
-                Placeholder de fotografía
-              </div>
-              Este espacio está preparado para sustituir el avatar por una fotografía real en futuras versiones.
-            </div>
+      <Card className="p-6 sm:p-7">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Gestión de datos</p>
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-petrol-100 bg-white/80 px-4 py-3">
+            <span className="text-sm font-semibold text-petrol-700">Estado</span>
+            <span className="text-sm text-slate-600">Datos locales</span>
           </div>
-        </Card>
-      </div>
+          <button type="button" disabled className="inline-flex w-full items-center justify-between rounded-xl border border-petrol-100 bg-white/70 px-4 py-3 text-left text-sm font-semibold text-slate-500 opacity-80">
+            <span>Exportar copia</span>
+            <span>(Próximamente)</span>
+          </button>
+          <button type="button" disabled className="inline-flex w-full items-center justify-between rounded-xl border border-petrol-100 bg-white/70 px-4 py-3 text-left text-sm font-semibold text-slate-500 opacity-80">
+            <span>Importar copia</span>
+            <span>(Próximamente)</span>
+          </button>
+          <Button variant="danger" onClick={() => setConfirmReset(true)}>
+            <RotateCcw className="size-4" />
+            Restablecer aplicación
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="p-6 sm:p-7">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Información</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <Button variant="ghost" onClick={() => setPage('privacy-policy')}>Política de privacidad</Button>
+          <Button variant="ghost" onClick={() => setPage('legal-notice')}>Aviso legal</Button>
+          <Button variant="ghost" onClick={() => setPage('security-privacy')}>Seguridad y privacidad</Button>
+          <a href="mailto:info@redcrea24.es?subject=Sugerencias%20Mi%20Recuperaci%C3%B3n%20Lumbar" className="ui-button ui-button-ghost animate-soft inline-flex min-h-[48px] items-center justify-center gap-2 rounded-[20px] border border-app-border bg-white/60 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-app-primaryDark transition hover:bg-app-primaryLight active:scale-[0.98]">Enviar sugerencias</a>
+          <a href="mailto:info@redcrea24.es" className="ui-button ui-button-ghost animate-soft inline-flex min-h-[48px] items-center justify-center gap-2 rounded-[20px] border border-app-border bg-white/60 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-app-primaryDark transition hover:bg-app-primaryLight active:scale-[0.98] sm:col-span-2">Contactar</a>
+        </div>
+      </Card>
 
       <Card className="p-6 sm:p-7">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua">Sobre el creador</p>
@@ -182,6 +195,18 @@ export function AboutPage({ setPage }: { setPage: (page: PageId) => void }) {
         <p>© 2026 José Duque · Redcrea24.es</p>
         <p>Versión 1.0.0</p>
       </footer>
+
+      {confirmReset && (
+        <ConfirmDialog
+          title="Restablecer aplicación"
+          body="Esta acción borrará todos los datos guardados en este dispositivo. No se puede deshacer."
+          onConfirm={() => {
+            clearState();
+            location.reload();
+          }}
+          onCancel={() => setConfirmReset(false)}
+        />
+      )}
     </div>
   );
 }

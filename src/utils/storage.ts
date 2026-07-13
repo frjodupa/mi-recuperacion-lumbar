@@ -85,6 +85,8 @@ function migrateState(state: AppState): AppState {
 
   return {
     ...state,
+    medicalDocuments: Array.isArray(state.medicalDocuments) ? state.medicalDocuments : [],
+    medicalAppointments: Array.isArray(state.medicalAppointments) ? state.medicalAppointments : [],
     trainingCenter: {
       favorites: Array.isArray(state.trainingCenter?.favorites) ? state.trainingCenter.favorites : [],
       routines: Array.isArray(state.trainingCenter?.routines) ? state.trainingCenter.routines : [],

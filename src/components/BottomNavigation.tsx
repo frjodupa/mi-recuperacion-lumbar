@@ -1,30 +1,30 @@
-import { Activity, BarChart3, ClipboardList, Dumbbell, Home, ListChecks, Settings } from 'lucide-react';
+import { BarChart3, Home, ListChecks, UserRound } from 'lucide-react';
 import { ThemeSelector } from './ui';
 import type { AppState } from '../types';
 
 const items = [
   { id: 'home', label: 'Hoy', icon: Home },
-  { id: 'routine', label: 'Sesión', icon: ListChecks },
-  { id: 'exercises', label: 'Ejercicios', icon: Activity },
-  { id: 'training', label: 'Centro', icon: Dumbbell },
+  { id: 'routine', label: 'Mi sesión', icon: ListChecks },
   { id: 'progress', label: 'Progreso', icon: BarChart3 },
-  { id: 'history', label: 'Historial', icon: ClipboardList },
-  { id: 'info', label: 'Más', icon: Settings },
+  { id: 'profile', label: 'Mi perfil', icon: UserRound },
 ] as const;
 const mobileItems = items;
 
 export type PageId =
   | typeof items[number]['id']
   | 'about'
-  | 'walking';
+  | 'walking'
+  | 'privacy-policy'
+  | 'legal-notice'
+  | 'security-privacy';
 
 export function BottomNavigation({ page, setPage, theme, onThemeChange }: { page: PageId; setPage: (page: PageId) => void; theme: AppState['preferences']['theme']; onThemeChange: (theme: AppState['preferences']['theme']) => void }) {
   return (
     <>
       <nav className="no-print fixed inset-x-0 bottom-0 z-[1000] border-t border-white/70 bg-white/78 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_50px_rgba(15,92,99,0.08)] backdrop-blur-2xl lg:hidden" aria-label="Navegación principal">
-        <div className="mx-auto flex max-w-2xl gap-1 overflow-x-auto rounded-[24px] border border-petrol-100/70 bg-white/60 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mx-auto grid max-w-xl grid-cols-4 gap-1 rounded-[24px] border border-petrol-100/70 bg-white/60 p-1">
           {mobileItems.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setPage(id)} className={`app-nav-button animate-soft flex min-h-14 min-w-[4.6rem] flex-col items-center justify-center rounded-[20px] px-2 text-[11px] font-semibold leading-tight tracking-[-0.01em] transition active:scale-[0.96] ${page === id ? 'bg-petrol-500 text-white shadow-[0_10px_26px_rgba(15,92,99,0.18)]' : 'text-slate-500 hover:bg-white/80 hover:text-petrol-700'}`} aria-current={page === id ? 'page' : undefined}>
+            <button key={id} onClick={() => setPage(id)} className={`app-nav-button animate-soft flex min-h-14 w-full flex-col items-center justify-center rounded-[20px] px-2 text-[11px] font-semibold leading-tight tracking-[-0.01em] transition active:scale-[0.96] ${page === id ? 'bg-petrol-500 text-white shadow-[0_10px_26px_rgba(15,92,99,0.18)]' : 'text-slate-500 hover:bg-white/80 hover:text-petrol-700'}`} aria-current={page === id ? 'page' : undefined}>
               <Icon className="size-5" aria-hidden />
               <span className="mt-0.5">{label}</span>
             </button>

@@ -747,6 +747,8 @@ export const initialAppState: AppState = {
   routines: initialRoutines,
   sessions: demoSessions,
   checkIns: [],
+  medicalDocuments: [],
+  medicalAppointments: [],
   trainingCenter: {
     favorites: [],
     routines: [],

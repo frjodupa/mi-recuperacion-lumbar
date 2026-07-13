@@ -11,10 +11,14 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "heic2any": "^0.0.4",
+    "idb": "^8.0.3",
     "lucide-react": "^0.468.0",
+    "pdfjs-dist": "^6.1.200",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^3.9.2"
+    "recharts": "^3.9.2",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

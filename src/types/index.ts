@@ -257,6 +257,75 @@ export interface TrainingCenterState {
   routines: TrainingRoutine[];
 }
 
+export type MedicalDocumentStatus = 'pending' | 'completed' | 'failed';
+export type MedicalProcessingMode = 'local' | 'remote';
+
+export interface MedicalExtractedFields {
+  reportDate: string;
+  hospitalOrCenter: string;
+  specialty: string;
+  documentType: string;
+  doctor: string;
+  surgeryDate: string;
+  interventionType: string;
+  vertebralLevel: string;
+  writtenRestrictions: string;
+  nextReview: string;
+  mentionedMedication: string;
+}
+
+export interface MedicalDocumentAnalysis {
+  status: MedicalDocumentStatus;
+  processingMode: MedicalProcessingMode;
+  progress: number;
+  fullText: string;
+  summary: string;
+  extracted: MedicalExtractedFields;
+  confirmed: MedicalExtractedFields;
+  warning?: string;
+  error?: string;
+}
+
+export interface MedicalDocument {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  fileSize: number;
+  uploadedAt: string;
+  objectStoreKey: string;
+  thumbnailDataUrl?: string;
+  analysis: MedicalDocumentAnalysis;
+}
+
+export type MedicalAppointmentSpecialty =
+  | 'Traumatología'
+  | 'Rehabilitación'
+  | 'Fisioterapia'
+  | 'Medicina de familia'
+  | 'Neurología'
+  | 'Enfermería'
+  | 'Prueba diagnóstica'
+  | 'Otra';
+
+export type MedicalAppointmentReminder = 'none' | '24h' | '2h' | '30m';
+
+export interface MedicalAppointment {
+  id: string;
+  date: string;
+  time: string;
+  specialty: MedicalAppointmentSpecialty;
+  professionalName: string;
+  medicalCenter: string;
+  reason: string;
+  personalNotes: string;
+  documentsToBring: string;
+  questionsToDiscuss: string;
+  reminder: MedicalAppointmentReminder;
+  selectedSessionIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface UserPreferences {
   onboarded: boolean;
   acceptedMedicalNotice: boolean;
@@ -288,6 +357,8 @@ export interface AppState {
   routines: Routine[];
   sessions: Session[];
   checkIns: DailyCheckIn[];
+  medicalDocuments: MedicalDocument[];
+  medicalAppointments: MedicalAppointment[];
   trainingCenter: TrainingCenterState;
   patientProfile?: PatientProfile;
   preferences: UserPreferences;

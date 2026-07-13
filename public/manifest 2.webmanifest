@@ -1,0 +1,56 @@
+{
+  "name": "Mi Recuperación Lumbar",
+  "short_name": "Recuperación",
+  "description": "Seguimiento personal de rehabilitación lumbar, ejercicios, evolución y bienestar.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#f7fbfb",
+  "theme_color": "#0f5c63",
+  "categories": ["health", "medical", "fitness"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mi plan",
+      "short_name": "Plan",
+      "description": "Abrir el plan de rehabilitación de hoy",
+      "url": "/?screen=routine",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Evolución",
+      "short_name": "Evolución",
+      "description": "Abrir evolución y estadísticas",
+      "url": "/?screen=progress",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    }
+  ]
+}

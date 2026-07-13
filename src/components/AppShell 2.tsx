@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { BottomNavigation, type PageId } from './BottomNavigation';
 import { Header } from './Header';
-import { ScrollToTopButton } from './ScrollToTopButton';
 import type { AppState } from '../types';
 
 export function AppShell({
@@ -27,7 +26,6 @@ export function AppShell({
         <main className="w-full min-w-0 flex-1 lg:max-w-[1240px]">
           <Header theme={theme} onThemeChange={onThemeChange} title={title} />
           {children}
-          <ScrollToTopButton />
         </main>
         <BottomNavigation page={page} setPage={setPage} theme={theme} onThemeChange={onThemeChange} />
       </div>

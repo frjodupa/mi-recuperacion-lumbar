@@ -53,10 +53,31 @@ export function SafetyNotice() {
   );
 }
 
+export function ResponsibilityNotice({
+  withEscalation = false,
+  className = '',
+}: {
+  withEscalation?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={`rounded-2xl border border-amber-200 bg-amber-50/75 p-3 text-sm text-amber-900 ${className}`}>
+      <p>
+        Esta aplicación organiza información y acompaña al usuario durante su recuperación. No emite diagnósticos ni sustituye la valoración de médicos, fisioterapeutas u otros profesionales sanitarios.
+      </p>
+      {withEscalation && (
+        <p className="mt-2 font-semibold">
+          Ante un empeoramiento, síntomas nuevos o dudas sobre el tratamiento, contacta con tu profesional sanitario.
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function Modal({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-petrol-700/40 p-4" role="dialog" aria-modal="true">
-      <div className="max-h-[92vh] w-full max-w-5xl overflow-auto rounded-[30px] border border-app-border bg-app-surface/95 p-6 shadow-2xl backdrop-blur-2xl">
+    <div className="fixed inset-0 z-[1200] grid place-items-center bg-petrol-700/40 p-3 sm:p-4" role="dialog" aria-modal="true">
+      <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-5xl overflow-auto rounded-[30px] border border-app-border bg-app-surface/95 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur-2xl sm:max-h-[92vh] sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-[var(--color-title)]">{title}</h2>
           <Button variant="ghost" onClick={onClose} aria-label="Cerrar"><X className="size-5" /></Button>
