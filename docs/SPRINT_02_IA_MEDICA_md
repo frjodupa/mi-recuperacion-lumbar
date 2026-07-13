@@ -1,0 +1,96 @@
+# SPRINT 02
+# IA especializada en Artrodesis Lumbar
+
+## Objetivo
+
+Transformar Mi Recuperación Lumbar en un asistente inteligente.
+
+No será una app de ejercicios.
+
+Será un asistente personal de rehabilitación.
+
+---
+
+## Función principal
+
+El paciente podrá subir:
+
+- fotografías
+- capturas de pantalla
+- informes médicos
+- informes del traumatólogo
+- informes del rehabilitador
+- resonancias
+- TAC
+- radiografías
+- electromiografías
+
+La IA interpretará la información.
+
+---
+
+## La IA deberá
+
+Extraer automáticamente:
+
+• fecha
+
+• diagnóstico
+
+• intervención
+
+• nivel vertebral
+
+• medicación
+
+• restricciones
+
+• ejercicios permitidos
+
+• ejercicios prohibidos
+
+• recomendaciones
+
+• próxima revisión
+
+---
+
+## Después
+
+Actualizar automáticamente
+
+Historial clínico.
+
+Fase de rehabilitación.
+
+Objetivos.
+
+Ejercicios permitidos.
+
+Alertas.
+
+---
+
+## Nunca
+
+La IA nunca diagnosticará.
+
+Nunca modificará tratamientos.
+
+Nunca sustituirá al médico.
+
+Siempre explicará que sus recomendaciones deben ser revisadas por un profesional sanitario.
+
+---
+
+## Resultado
+
+La aplicación deberá adaptarse automáticamente al paciente.
+
+No será el paciente quien adapte la aplicación.
+
+---
+
+## Objetivo final
+
+Que un paciente pueda fotografiar un informe y en menos de 30 segundos tener organizada toda su recuperación.

@@ -38,3 +38,96 @@ This repository contains a React, TypeScript, and Vite PWA for lumbar rehabilita
 - Treat this as a health/recovery app, so avoid making claims about medical treatment or safety.
 - If PWA assets change, keep the service worker and manifest behavior consistent with the existing assets under [public](public).
 - For release-worthy changes, follow the checklist in [README.md](README.md) and avoid breaking installed PWA behavior.
+---
+
+# MI RECUPERACIÓN LUMBAR · REGLAS DEL PROYECTO
+
+## Documentación obligatoria
+
+Antes de realizar cualquier cambio debes leer y respetar:
+
+- docs/PROJECT_DNA.md
+- docs/ROADMAP.md
+
+Estas normas tienen prioridad sobre cualquier sugerencia automática.
+
+---
+
+# Flujo de trabajo obligatorio
+
+Antes de modificar el código:
+
+1. Analiza el problema.
+2. Indica qué archivos vas a modificar.
+3. Explica brevemente por qué.
+4. Espera mi aprobación.
+
+Después de mi aprobación:
+
+- realiza únicamente esos cambios;
+- verifica que el proyecto compile;
+- ejecuta las comprobaciones necesarias;
+- resume exactamente qué has cambiado.
+
+Nunca hagas cambios adicionales.
+
+---
+
+# Filosofía
+
+Esta aplicación es un asistente inteligente especializado en la recuperación tras una artrodesis lumbar.
+
+No es una aplicación de fitness.
+
+No es un gimnasio virtual.
+
+No es una aplicación médica general.
+
+Todas las decisiones deben simplificar la recuperación del paciente.
+
+---
+
+# Diseño
+
+La interfaz debe transmitir:
+
+- calma;
+- claridad;
+- confianza;
+- simplicidad;
+- aspecto premium.
+
+Inspiración:
+
+- Apple Health
+- Apple Fitness
+- Notion
+- Linear
+- Tesla
+
+Nunca saturar una pantalla.
+
+Siempre dejar respirar el contenido.
+
+---
+
+# IA
+
+La IA debe ayudar al paciente a:
+
+- comprender informes médicos;
+- organizar documentos;
+- entender restricciones;
+- seguir la rehabilitación.
+
+La IA nunca debe:
+
+- diagnosticar;
+- modificar tratamientos;
+- sustituir al profesional sanitario.
+
+---
+
+# Regla principal
+
+Si existe una solución más sencilla, siempre elegir la más sencilla.
